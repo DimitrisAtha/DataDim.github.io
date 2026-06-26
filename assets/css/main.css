@@ -3292,7 +3292,7 @@ input, select, textarea {
 
 	#intro {
 		color: #ffffff;
-		padding: 8rem 4rem 6rem 4rem ;
+		padding: 3rem 4rem 3rem 4rem ;
 		-moz-align-items: center;
 		-webkit-align-items: center;
 		-ms-align-items: center;
@@ -3317,10 +3317,10 @@ input, select, textarea {
 		cursor: default;
 		text-align: center;
 		z-index: 1;
-		min-height: 100vh;
+		min-height: auto;
 	}
 
-		#intro input, #intro select, #intro textarea {
+	#intro input, #intro select, #intro textarea {
 			color: #ffffff;
 		}
 
@@ -3459,8 +3459,8 @@ input, select, textarea {
 		@media screen and (max-width: 980px) {
 
 			#intro {
-				padding: 4rem 4rem 2rem 4rem ;
-				min-height: 90vh;
+				padding: 2rem 4rem 2rem 4rem ;
+				min-height: auto;
 			}
 
 				#intro p br {
@@ -3476,8 +3476,8 @@ input, select, textarea {
 		@media screen and (max-width: 736px) {
 
 			#intro {
-				padding: 3rem 2rem 1rem 2rem ;
-				min-height: 80vh;
+				padding: 2rem 2rem 1rem 2rem ;
+				min-height: auto;
 			}
 
 				#intro h1 {
