@@ -3292,7 +3292,7 @@ input, select, textarea {
 
 	#intro {
 		color: #ffffff;
-		padding: 3rem 4rem 3rem 4rem ;
+		padding: 6rem 4rem 3rem 4rem ;
 		-moz-align-items: center;
 		-webkit-align-items: center;
 		-ms-align-items: center;
@@ -3393,7 +3393,7 @@ input, select, textarea {
 				}
 
 		#intro h1 {
-			font-size: 5rem;
+			font-size: 2.5rem;
 			line-height: 1;
 		}
 
