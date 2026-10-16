@@ -1,187 +1,432 @@
-<!DOCTYPE HTML>
-<!--
-	Massively by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
--->
-<html>
-	<head>
-		<title>Dimitris Athanasaros Portfolio</title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="assets/css/main.css" />
-		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
-		<style>
-			#intro,
-			body.is-preload #intro {
-				opacity: 1 !important;
-				transform: none !important;
-				background-color: #1e252d;
-			}
-			#wrapper.fade-in:before {
-				display: none !important;
-			}
-		</style>
-	</head>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dimitris Athanasaros · Data Analyst &amp; BI Consultant</title>
+  <meta name="description" content="Data Analyst and BI consultant in Athens. Power BI, DAX, SQL and data modelling: reports that answer a business question, compare fairly and say what it means.">
+  <meta name="author" content="Dimitris Athanasaros">
+  <meta name="theme-color" content="#0f2237">
+  <link rel="canonical" href="https://dimitrisatha.github.io/DataDim.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dimitris Athanasaros · Data Analyst &amp; BI Consultant">
+  <meta property="og:description" content="Power BI, DAX, SQL and data modelling, from the raw export to the boardroom story.">
+  <meta property="og:url" content="https://dimitrisatha.github.io/DataDim.github.io/">
+  <meta property="og:image" content="https://dimitrisatha.github.io/DataDim.github.io/images/og-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
 
-	<body class="is-preload">
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="./" aria-label="Dimitris Athanasaros, home"><span class="mono-badge" aria-hidden="true">DA</span><span class="brand-name">Dimitris Athanasaros</span></a>
+      <nav aria-label="Main">
+        <ul class="nav-links">
+          <li><a href="#work">Work</a></li>
+          <li><a href="#approach">Approach</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-sm btn-primary nav-cta" href="mailto:athanasarosd@gmail.com">Get in touch</a>
+    </div>
+  </header>
 
-		<div id="wrapper" class="fade-in">
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Data Analyst · BI Consultant · Athens, Greece</p>
+          <h1>I turn operational data into <em>decisions leaders can act on.</em></h1>
+          <p class="lead">Power BI, DAX, SQL and data modelling, from the raw export to the boardroom story. Every report I build answers a business question, compares like with like, and says what the numbers mean.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="branch-performance.html">Read the featured case study
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn btn-ghost-dark" href="#work">See all work</a>
+          </div>
+          <ul class="hero-facts">
+            <li><strong>3+ years</strong>BI and analytics in energy, payments, consulting</li>
+            <li><strong>SAP Certified</strong>Data Analyst, SAP Analytics Cloud</li>
+            <li><strong>BSc</strong>Applied Mathematics</li>
+          </ul>
+        </div>
 
-			<!-- Intro -->
-			<div id="intro">
-				<h1>Dimitris Athanasaros Portfolio<br /></h1>
-				<p>
-					Exploring data-driven insights and delivering meaningful analysis through hands-on data projects in areas such as Business, Healthcare, and Finance.
-					<a href="https://www.linkedin.com/in/dimitris-athanasaros">@Dimitris_Athanasaros</a>
-				</p>
+        <figure class="preview" aria-label="Sample view of a report page, with synthetic data">
+          <div class="preview-head">
+            <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span>Branch Performance · Ranking</span>
+            <span class="tag-synth">Synthetic data</span>
+          </div>
+          <div class="preview-kpis">
+            <div class="kpi"><span class="kpi-label">New merchants</span><span class="kpi-value down">−10%</span><span class="kpi-sub">vs same months</span></div>
+            <div class="kpi"><span class="kpi-label">Volume</span><span class="kpi-value up">+20%</span><span class="kpi-sub">vs same months</span></div>
+            <div class="kpi"><span class="kpi-label">Value per merchant</span><span class="kpi-value up">+33%</span><span class="kpi-sub">yearly, per merchant</span></div>
+          </div>
+          <div class="preview-chart" id="hero-scatter"></div>
+          <figcaption class="preview-insight"><span class="insight-tag">Key insight</span>Fewer new merchants, but each one is worth more. Before calling it growth, check which branches depend on one big client.</figcaption>
+        </figure>
+      </div>
+    </section>
 
-				<ul class="actions">
-					<li><a href="#header" class="button icon solid solo fa-arrow-down scrolly">Continue</a></li>
-				</ul>
-			</div>
+    <!-- Value -->
+    <section class="section" id="value">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">What I bring</p>
+          <h2>Insight a business can use, not just dashboards</h2>
+          <p class="lead">Four things I do on every project, whatever the tool.</p>
+        </div>
+        <div class="grid-4">
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></div>
+            <h3>Answer the real question</h3>
+            <p>Each report page answers one management question. The title states the answer, and a measure writes the insight sentence, so it stays right after every refresh.</p>
+          </article>
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></svg></div>
+            <h3>Make comparisons fair</h3>
+            <p>Same months against same months, rates in percentage points, every group measured on equal terms. No flattering numbers that fall apart in the meeting.</p>
+          </article>
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+            <h3>Find the risk behind the average</h3>
+            <p>Averages hide things. Before I call something growth, I check how much of it depends on one client, one region or one season.</p>
+          </article>
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3.9M4 4v4h4M4 13a8 8 0 0 0 14.9 3.9M20 20v-4h-4"/></svg></div>
+            <h3>Automate the repeat work</h3>
+            <p>Pipelines that pick up next month's file on their own, with checks that tie every total back to the source. A monthly update should be a refresh, not a rebuild.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-			<!-- Header -->
-			<header id="header">
-				<a href="index.html" class="logo">Dimitris Athanasaros</a>
-			</header>
+    <!-- Work -->
+    <section class="section section-alt" id="work">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Selected work</p>
+          <h2>Case study and projects</h2>
+        </div>
 
-			<!-- Nav -->
-			<nav id="nav">
-				<ul class="links">
-					<li class="active"><a href="index.html">Projects</a></li>
-				</ul>
+        <a class="feature" href="branch-performance.html">
+          <div class="feature-art" aria-hidden="true">
+            <svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet">
+              <g fill="none" stroke="#9cc4f2" stroke-opacity=".55" stroke-width="1.6">
+                <path d="M115 120V168"/>
+                <path d="M190 214C210 214 205 144 225 144"/>
+                <path d="M190 214C210 214 205 296 225 296"/>
+                <path d="M375 144C395 144 390 214 410 214"/>
+                <path d="M375 296C395 296 390 214 410 214"/>
+              </g>
+              <path d="M115 260C115 400 485 400 485 260" fill="none" stroke="#8fc0ff" stroke-width="1.6" stroke-dasharray="6 5"/>
+              <g font-family="JetBrains Mono, monospace" font-size="12.5" fill="#fff">
+                <g transform="translate(40 28)"><rect width="150" height="92" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".16"/><rect width="150" height="28" rx="12" fill="#3987e5" fill-opacity=".28"/><rect y="16" width="150" height="12" fill="#3987e5" fill-opacity=".28"/><text x="12" y="19">Dim_Branch</text><rect x="12" y="42" width="96" height="6" rx="3" fill="#fff" fill-opacity=".22"/><rect x="12" y="58" width="72" height="6" rx="3" fill="#fff" fill-opacity=".14"/><rect x="12" y="74" width="84" height="6" rx="3" fill="#fff" fill-opacity=".14"/></g>
+                <g transform="translate(40 168)"><rect width="150" height="92" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".16"/><rect width="150" height="28" rx="12" fill="#3987e5" fill-opacity=".28"/><rect y="16" width="150" height="12" fill="#3987e5" fill-opacity=".28"/><text x="12" y="19">Dim_MID</text><rect x="12" y="42" width="60" height="6" rx="3" fill="#fff" fill-opacity=".22"/><rect x="12" y="58" width="104" height="6" rx="3" fill="#fff" fill-opacity=".14"/><rect x="12" y="74" width="80" height="6" rx="3" fill="#fff" fill-opacity=".14"/></g>
+                <g transform="translate(225 98)"><rect width="150" height="92" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".16"/><rect width="150" height="28" rx="12" fill="#eb6834" fill-opacity=".32"/><rect y="16" width="150" height="12" fill="#eb6834" fill-opacity=".32"/><text x="12" y="19">Fact_Volume</text><rect x="12" y="42" width="40" height="6" rx="3" fill="#fff" fill-opacity=".22"/><rect x="12" y="58" width="56" height="6" rx="3" fill="#fff" fill-opacity=".14"/><rect x="12" y="74" width="92" height="6" rx="3" fill="#fff" fill-opacity=".14"/></g>
+                <g transform="translate(225 250)"><rect width="150" height="92" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".16"/><rect width="150" height="28" rx="12" fill="#eb6834" fill-opacity=".32"/><rect y="16" width="150" height="12" fill="#eb6834" fill-opacity=".32"/><text x="12" y="19">Fact_MID_Status</text><rect x="12" y="42" width="40" height="6" rx="3" fill="#fff" fill-opacity=".22"/><rect x="12" y="58" width="56" height="6" rx="3" fill="#fff" fill-opacity=".14"/><rect x="12" y="74" width="70" height="6" rx="3" fill="#fff" fill-opacity=".14"/></g>
+                <g transform="translate(410 168)"><rect width="150" height="92" rx="12" fill="#fff" fill-opacity=".06" stroke="#fff" stroke-opacity=".16"/><rect width="150" height="28" rx="12" fill="#3987e5" fill-opacity=".28"/><rect y="16" width="150" height="12" fill="#3987e5" fill-opacity=".28"/><text x="12" y="19">Dim_Date</text><rect x="12" y="42" width="52" height="6" rx="3" fill="#fff" fill-opacity=".22"/><rect x="12" y="58" width="36" height="6" rx="3" fill="#fff" fill-opacity=".14"/><rect x="12" y="74" width="64" height="6" rx="3" fill="#fff" fill-opacity=".14"/></g>
+              </g>
+              <g transform="translate(410 46)">
+                <rect width="150" height="78" rx="12" fill="#fff" fill-opacity=".95"/>
+                <text x="14" y="24" font-family="Inter, sans-serif" font-size="11" fill="#5f6b80">Value per merchant</text>
+                <text x="14" y="56" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#0a7a0a">+33%</text>
+                <path d="M96 58l10-8 8 4 12-14 10 4" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </svg>
+          </div>
+          <div class="feature-body">
+            <div class="chips">
+              <span class="chip chip-accent">Featured case study</span>
+              <span class="chip">Power BI</span>
+              <span class="chip">DAX</span>
+              <span class="chip">Power Query</span>
+              <span class="chip">Star schema</span>
+            </div>
+            <h3>Branch Performance: are new merchants worth more, or just more?</h3>
+            <p>An executive Power BI report on new-merchant acquisition across a national branch network of a payments company. I built it end to end, from the data model to the presenter notes, for a VP and then the global board.</p>
+            <ul class="ticks">
+              <li>Showed that fewer new merchants were bringing more volume, and made value per merchant the measure of quality</li>
+              <li>Found that one new client carried a large part of the year's growth, and flagged it as a risk</li>
+              <li>Added a risk view of sales reps: steady business, or dependence on one big client</li>
+            </ul>
+            <span class="link-arrow">Read the case study
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </div>
+        </a>
 
-				<ul class="icons">
-					<li><a href="https://www.linkedin.com/in/dimitris-athanasaros/" class="icon brands alt fa-linkedin"><span class="label">linkedin</span></a></li>
-					<li><a href="https://github.com/DimitrisAtha" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
-				</ul>
-			</nav>
+        <div class="sub-head">
+          <h3>More projects</h3>
+          <p>Personal and training projects</p>
+        </div>
+        <div class="projects">
+          <article class="project">
+            <div class="project-art" aria-hidden="true">
+              <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+                <rect class="art-bg" width="320" height="200"/>
+                <path class="art-grid" d="M28 60H292M28 105H292M28 150H292"/>
+                <path class="art-a" d="M44 170V126Q44 122 48 122H58Q62 122 62 126V170Z"/>
+                <path class="art-a" d="M80 170V112Q80 108 84 108H94Q98 108 98 112V170Z"/>
+                <path class="art-a" d="M116 170V118Q116 114 120 114H130Q134 114 134 118V170Z"/>
+                <path class="art-a" d="M152 170V94Q152 90 156 90H166Q170 90 170 94V170Z"/>
+                <path class="art-a" d="M188 170V84Q188 80 192 80H202Q206 80 206 84V170Z"/>
+                <path class="art-a" d="M224 170V70Q224 66 228 66H238Q242 66 242 70V170Z"/>
+                <path class="art-a" d="M260 170V52Q260 48 264 48H274Q278 48 278 52V170Z"/>
+                <path class="art-line-b" d="M53 108L89 98L125 102L161 78L197 70L233 56L269 38"/>
+                <circle class="art-b art-ring" cx="269" cy="38" r="5"/>
+              </svg>
+            </div>
+            <div class="project-body">
+              <p class="project-meta">Power BI · DAX · 2025–2026</p>
+              <h4>Executive Sales Performance</h4>
+              <p>A star-schema model and interactive dashboards for year-on-year growth, with sales broken down by category, salesperson and product.</p>
+              <p class="project-foot"><a class="link-arrow" href="mailto:athanasarosd@gmail.com?subject=Executive%20Sales%20Performance%20walkthrough">Ask me for a walkthrough</a></p>
+            </div>
+          </article>
 
-			<!-- Main -->
-			<div id="main">
+          <article class="project">
+            <div class="project-art" aria-hidden="true">
+              <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+                <rect class="art-bg" width="320" height="200"/>
+                <path class="art-grid" d="M28 60H292M28 105H292M28 150H292"/>
+                <path class="art-a-soft" d="M30 170C110 168 160 160 200 130C235 104 260 70 290 36V170Z"/>
+                <path class="art-line-a" d="M30 170C110 168 160 160 200 130C235 104 260 70 290 36"/>
+                <circle class="art-a art-ring" cx="290" cy="36" r="5"/>
+                <circle class="art-b art-ring" cx="70" cy="60" r="6"/>
+                <circle class="art-b art-ring" cx="96" cy="76" r="4"/>
+                <circle class="art-b art-ring" cx="118" cy="52" r="8"/>
+                <circle class="art-b art-ring" cx="146" cy="70" r="5"/>
+              </svg>
+            </div>
+            <div class="project-body">
+              <p class="project-meta">SQL · Tableau · 2023</p>
+              <h4>Covid-19: five months of the pandemic</h4>
+              <p>Pulled data from four related WHO tables with SQL, then built a Tableau dashboard that tracks the spread over time and by country.</p>
+              <p class="project-foot"><a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyHealthCareTasks/DashTaskHealth" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a></p>
+            </div>
+          </article>
 
-				<!-- Featured Post -->
-				<article class="post featured">
-					<header class="major">
-						<h2>
-							<a href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/Final_dashboard_workearly/Dashboard1">
-								Sales Analytics Dashboard
-							</a>
-						</h2>
+          <article class="project">
+            <div class="project-art" aria-hidden="true">
+              <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+                <rect class="art-bg" width="320" height="200"/>
+                <path class="art-grid" d="M40 30V176"/>
+                <path class="art-b" d="M40 40H252Q256 40 256 44V54Q256 58 252 58H40Z"/>
+                <path class="art-a" d="M40 70H214Q218 70 218 74V84Q218 88 214 88H40Z"/>
+                <path class="art-a" d="M40 100H180Q184 100 184 104V114Q184 118 180 118H40Z"/>
+                <path class="art-a" d="M40 130H138Q142 130 142 134V144Q142 148 138 148H40Z"/>
+                <path class="art-a" d="M40 160H96Q100 160 100 164V170Q100 174 96 174H40Z"/>
+              </svg>
+            </div>
+            <div class="project-body">
+              <p class="project-meta">Tableau · 2023</p>
+              <h4>Business Performance: sales, profit and orders</h4>
+              <p>Sales, profit and order patterns across customer segments, product categories and cities, explored with filters and drill-down.</p>
+              <p class="project-foot"><a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyFinalAssignmentAD/DashFinal" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a></p>
+            </div>
+          </article>
 
-						<p>
-							Designed and developed a Power BI dashboard enabling YoY and YTD sales analysis across categories, tracking monthly volumes, gross margin, and salesperson performance.
-						</p>
-					</header>
+          <article class="project">
+            <div class="project-art" aria-hidden="true">
+              <svg viewBox="0 0 320 200" preserveAspectRatio="xMidYMid slice">
+                <rect class="art-bg" width="320" height="200"/>
+                <circle class="art-b art-ring" cx="190" cy="78" r="38"/>
+                <circle class="art-a art-ring" cx="132" cy="112" r="30"/>
+                <circle class="art-a art-ring" cx="214" cy="140" r="20"/>
+                <circle class="art-a art-ring" cx="92" cy="70" r="16"/>
+                <circle class="art-muted art-ring" cx="252" cy="104" r="13"/>
+                <circle class="art-a art-ring" cx="170" cy="156" r="12"/>
+                <circle class="art-muted art-ring" cx="98" cy="150" r="10"/>
+                <circle class="art-a art-ring" cx="244" cy="54" r="9"/>
+                <circle class="art-muted art-ring" cx="140" cy="58" r="8"/>
+              </svg>
+            </div>
+            <div class="project-body">
+              <p class="project-meta">Tableau · 2023</p>
+              <h4>Store Performance: sales by location</h4>
+              <p>Which stores and ZIP codes sell the most bottles, and each store's share of total sales, on a map and in ranked tables.</p>
+              <p class="project-foot"><a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/Final_dashboard_workearly/Dashboard1" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a></p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-					<!-- FIXED IMAGE BLOCK -->
-					<span class="image main">
-						<img src="https://dimitrisatha.github.io/DataDim.github.io/images/sales_gpt_image.png" alt="" />
-					</span>
+    <!-- Approach -->
+    <section class="section" id="approach">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">How I think</p>
+          <h2>My approach to an analytics problem</h2>
+          <p class="lead">The same six steps, from the first question to the monthly refresh. The examples come from the Branch Performance case study.</p>
+        </div>
+        <ol class="steps">
+          <li class="card">
+            <span class="step-num">01</span>
+            <h3>Start from the decision</h3>
+            <p>Who reads it, and what will they decide? Each page gets one question, and the visuals are chosen to answer it.</p>
+            <p class="step-eg"><b>Example:</b> "Are we growing, on the same months as last year?"</p>
+          </li>
+          <li class="card">
+            <span class="step-num">02</span>
+            <h3>Check the data before the visuals</h3>
+            <p>Totals tie to the source, gaps are counted and named, and mappings are taken from the data, never guessed.</p>
+            <p class="step-eg"><b>Example:</b> two gaps in the source found and sent to the data owner before the meeting.</p>
+          </li>
+          <li class="card">
+            <span class="step-num">03</span>
+            <h3>Compare like with like</h3>
+            <p>Same months, same time to mature, rates in percentage points. A fair number is worth more than an exciting one.</p>
+            <p class="step-eg"><b>Example:</b> a product adoption jump of 3x became a fair 2x.</p>
+          </li>
+          <li class="card">
+            <span class="step-num">04</span>
+            <h3>Look behind the average</h3>
+            <p>Concentration, outliers and seasonality change the story, so I test them before anything goes on a slide.</p>
+            <p class="step-eg"><b>Example:</b> one client behind a large part of a year's growth.</p>
+          </li>
+          <li class="card">
+            <span class="step-num">05</span>
+            <h3>Say what it means</h3>
+            <p>The title is the answer, the "so what" is written down, and the next step has a name.</p>
+            <p class="step-eg"><b>Example:</b> presenter notes for every visual: what it shows, how it works, what to say.</p>
+          </li>
+          <li class="card">
+            <span class="step-num">06</span>
+            <h3>Automate the repeat</h3>
+            <p>Next month should take a refresh, not a rebuild. Inputs are read by name, checks run on their own.</p>
+            <p class="step-eg"><b>Example:</b> new monthly sheets are picked up automatically by the model.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
 
-					<ul class="actions special">
-						<li>
-							<a href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/Final_dashboard_workearly/Dashboard1" class="button large">
-								View Project
-							</a>
-						</li>
-					</ul>
-				</article>
+    <!-- Skills -->
+    <section class="section section-alt" id="skills">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Core skills</p>
+          <h2>What I work with</h2>
+          <p class="lead">Grouped by what each skill does for the business, with the tools behind it.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card skill key">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></div><h3>SQL</h3></div>
+            <p>Joins across related tables, aggregations and clean extracts that feed reports and dashboards.</p>
+            <div class="chips"><span class="chip">SQL Server</span><span class="chip">MySQL</span><span class="chip">Joins</span><span class="chip">Aggregation</span></div>
+          </article>
+          <article class="card skill key">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="6" height="6" rx="1"/><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="17" y="2" width="5" height="5" rx="1"/><rect x="2" y="17" width="5" height="5" rx="1"/><rect x="17" y="17" width="5" height="5" rx="1"/><path d="M7 7l2 2M17 7l-2 2M7 17l2-2M17 17l-2-2"/></svg></div><h3>Data modelling</h3></div>
+            <p>Star schemas at the right grain, role-playing dates, composite keys and validation queries, so every measure has one clear meaning.</p>
+            <div class="chips"><span class="chip">Star schema</span><span class="chip">Relationships</span><span class="chip">Grain</span><span class="chip">Validation</span></div>
+          </article>
+          <article class="card skill key">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H9.5A2.5 2.5 0 0 0 7 6.5V20M4 11h7M14 13l6 6M20 13l-6 6"/></svg></div><h3>DAX</h3></div>
+            <p>Time intelligence (YoY, YTD, same period), inactive relationships, iterators, dynamic formats and measures that write the insight sentence.</p>
+            <div class="chips"><span class="chip">CALCULATE</span><span class="chip">USERELATIONSHIP</span><span class="chip">AVERAGEX</span><span class="chip">TOPN</span></div>
+          </article>
+          <article class="card skill key">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div><h3>Process automation</h3></div>
+            <p>Monthly reviews and reports that run themselves, such as automated gross margin and volume analysis and refresh-ready Power Query pipelines.</p>
+            <div class="chips"><span class="chip">Power Query (M)</span><span class="chip">Parameters</span><span class="chip">Refresh</span><span class="chip">Excel</span></div>
+          </article>
+          <article class="card skill key">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.8 4.7 4.7 1.8-4.7 1.8L12 16l-1.8-4.7-4.7-1.8 4.7-1.8z"/><path d="M19 15l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></svg></div><h3>AI-assisted analytics</h3></div>
+            <p>I use AI assistants to draft and review DAX and M, document models and move faster. Every result is checked against the data before it is used.</p>
+            <div class="chips"><span class="chip">Microsoft Copilot</span><span class="chip">Claude</span><span class="chip">Prompting</span></div>
+          </article>
+          <article class="card skill">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18M6 17v-6M12 17V5M18 17v-9"/></svg></div><h3>BI and visualisation</h3></div>
+            <p>Executive dashboards that lead with the answer and stay easy to read, with interactive filters and drill-down.</p>
+            <div class="chips"><span class="chip">Power BI</span><span class="chip">SAP Analytics Cloud</span><span class="chip">Tableau</span><span class="chip">Excel</span></div>
+          </article>
+          <article class="card skill">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18l-7 8v6l-4 2v-8z"/></svg></div><h3>ETL and data quality</h3></div>
+            <p>Clean, reshape and combine messy Excel and system exports. Errors become labelled gaps instead of broken refreshes.</p>
+            <div class="chips"><span class="chip">Power Query</span><span class="chip">SAP master data</span><span class="chip">Reconciliation</span></div>
+          </article>
+          <article class="card skill">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6 2 12l6 6M16 6l6 6-6 6"/></svg></div><h3>Python and statistics</h3></div>
+            <p>Data preparation and statistical analysis, built on a degree in Applied Mathematics.</p>
+            <div class="chips"><span class="chip">Pandas</span><span class="chip">NumPy</span><span class="chip">SciPy</span><span class="chip">Matplotlib</span></div>
+          </article>
+          <article class="card skill">
+            <div class="skill-head"><div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M16 4a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg></div><h3>Business and communication</h3></div>
+            <p>KPI design, presenting to management, and training end users in workshops so the reports actually get used.</p>
+            <div class="chips"><span class="chip">KPIs</span><span class="chip">Storytelling</span><span class="chip">Training</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-				<!-- Posts -->
-				<section class="posts">
+    <!-- Background -->
+    <section class="section" id="background">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Background</p>
+          <h2>Education and certifications</h2>
+        </div>
+        <div class="grid-3">
+          <article class="card">
+            <h3 class="bg-title">Education</h3>
+            <ul class="bg-list">
+              <li><strong>BSc Applied Mathematics</strong><span>University of Crete · statistical analysis, calculus, mathematical modelling</span></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3 class="bg-title">Certifications</h3>
+            <ul class="bg-list">
+              <li><strong>SAP Certified Associate, Data Analyst</strong><span>SAP Analytics Cloud</span></li>
+              <li><strong>Data Analytics Professional Certificate</strong><span>Google</span></li>
+              <li><strong>Healthcare Data Science School</strong><span>Reatcode-Workearly</span></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3 class="bg-title">Experience in</h3>
+            <ul class="bg-list">
+              <li><strong>Industries</strong><span>Energy · Payments · IT consulting · Healthcare data</span></li>
+              <li><strong>Roles</strong><span>SAP Analytics Cloud consultant · Sales operations and BI analyst</span></li>
+              <li><strong>Languages</strong><span>Greek and English, both excellent</span></li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
 
-					<article>
-						<header>
-							<h2>
-								<a href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyHealthCareTasks/DashTaskHealth">
-									Covid-19 Cases Visualization
-								</a>
-							</h2>
-						</header>
+    <!-- Contact -->
+    <section class="contact" id="contact">
+      <div class="wrap">
+        <p class="eyebrow">Contact</p>
+        <h2>Let's talk about your data</h2>
+        <p>Have a reporting problem, or a role where this way of working fits? Email is the fastest way to reach me.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="mailto:athanasarosd@gmail.com">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>athanasarosd@gmail.com</a>
+          <a class="btn btn-ghost-dark" href="https://www.linkedin.com/in/dimitris-athanasaros/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.1c.5-1 1.8-2 3.8-2 4 0 4.8 2.6 4.8 6V21h-4v-5.6c0-1.3 0-3-1.9-3s-2.1 1.4-2.1 2.9V21H9z"/></svg>LinkedIn</a>
+          <a class="btn btn-ghost-dark" href="https://github.com/DimitrisAtha" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>GitHub</a>
+        </div>
+        <p class="contact-small">Athens, Greece · <a href="tel:+306989903192">+30 698 990 3192</a></p>
+      </div>
+    </section>
+  </main>
 
-						<a href="#" class="image fit">
-							<img src="images/Portfolio_covid_picture.jpg" alt="" />
-						</a>
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Dimitris Athanasaros</span>
+      <span>Charts on this site use synthetic data · <a href="#main">Back to top</a></span>
+    </div>
+  </footer>
 
-						<p>
-							I utilized SQL to extract data from World Health Organization databases, and created a dynamic dashboard to track the spread of Covid-19 over time using Tableau.
-						</p>
-
-						<ul class="actions special">
-							<li><a href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyHealthCareTasks/DashTaskHealth" class="button">View Project</a></li>
-						</ul>
-					</article>
-
-					<article>
-						<header>
-							<h2>
-								<a href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyFinalAssignmentAD/DashFinal">
-									Business Performance Dashboard
-								</a>
-							</h2>
-						</header>
-
-						<a href="#" class="image fit">
-							<img src="images/Portfolio_performance_picture.jpg" alt="" />
-						</a>
-
-						<p>
-							Discovering Patterns and Behaviors in Customer and Market Segments and view of Business Performance in different cities and regions using Tableau.
-						</p>
-
-						<ul class="actions special">
-							<li><a href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyFinalAssignmentAD/DashFinal" class="button">View Project</a></li>
-						</ul>
-					</article>
-
-				</section>
-
-			</div>
-
-			<!-- Footer -->
-			<footer id="footer">
-				<section class="split contact">
-					<section class="alt">
-						<h3>Location</h3>
-						<p>Athens, Greece</p>
-					</section>
-
-					<section>
-						<h3>Phone</h3>
-						<p><a href="#">(+30)6989903192</a></p>
-					</section>
-
-					<section>
-						<h3>Email</h3>
-						<p><a href="#">athanasarosd@gmail.com</a></p>
-					</section>
-
-					<section>
-						<h3>Social</h3>
-						<ul class="icons alt">
-							<li><a href="https://www.linkedin.com/in/dimitris-athanasaros/" class="icon brands alt fa-linkedin"><span class="label">LinkedIn</span></a></li>
-							<li><a href="https://github.com/DimitrisAtha" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
-						</ul>
-					</section>
-				</section>
-
-				<div id="copyright">
-					<ul><li>&copy; Dimitris Athanasaros</li><li>Design: <a href="https://html5up.net">HTML5 UP</a></li></ul>
-				</div>
-			</footer>
-
-		</div>
-
-		<!-- Scripts -->
-		<script src="assets/js/jquery.min.js"></script>
-		<script src="assets/js/jquery.scrollex.min.js"></script>
-		<script src="assets/js/jquery.scrolly.min.js"></script>
-		<script src="assets/js/browser.min.js"></script>
-		<script src="assets/js/breakpoints.min.js"></script>
-		<script src="assets/js/util.js"></script>
-		<script src="assets/js/main.js"></script>
-
-	</body>
+  <script src="js/site.js"></script>
+  <script src="js/charts.js"></script>
+</body>
 </html>

@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Branch Performance case study · Dimitris Athanasaros</title>
+  <meta name="description" content="Case study: an executive Power BI report on new-merchant acquisition across a national branch network. Data model, DAX, insights and how they were validated.">
+  <meta name="author" content="Dimitris Athanasaros">
+  <meta name="theme-color" content="#0f2237">
+  <link rel="canonical" href="https://dimitrisatha.github.io/DataDim.github.io/branch-performance.html">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Branch Performance: are new merchants worth more, or just more?">
+  <meta property="og:description" content="An executive Power BI report, built end to end: star schema, 60+ DAX measures, and insights a VP can act on.">
+  <meta property="og:url" content="https://dimitrisatha.github.io/DataDim.github.io/branch-performance.html">
+  <meta property="og:image" content="https://dimitrisatha.github.io/DataDim.github.io/images/og-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap">
+  <link rel="stylesheet" href="css/site.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="./" aria-label="Dimitris Athanasaros, home"><span class="mono-badge" aria-hidden="true">DA</span><span class="brand-name">Dimitris Athanasaros</span></a>
+      <nav aria-label="Case study sections">
+        <ul class="nav-links">
+          <li><a href="#brief">Brief</a></li>
+          <li><a href="#build">Build</a></li>
+          <li><a href="#insights">Insights</a></li>
+          <li><a href="#dax">DAX</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-sm btn-primary nav-cta" href="mailto:athanasarosd@gmail.com?subject=Branch%20Performance%20case%20study">Get in touch</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="cs-hero">
+      <div class="wrap">
+        <a class="crumb" href="./#work"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>All work</a>
+        <p class="eyebrow">Case study · Payments · 2026</p>
+        <h1>Branch Performance: are new merchants worth more, or just more?</h1>
+        <p class="lead">An executive Power BI report on new-merchant acquisition across a national branch network. I built it end to end: the data model, the DAX, the report pages and the presenter notes, for a VP and then the global board.</p>
+        <dl class="meta-grid">
+          <div><dt>Role</dt><dd>Sole analyst, end to end</dd></div>
+          <div><dt>Audience</dt><dd>A VP, then the global board</dd></div>
+          <div><dt>Stack</dt><dd>Excel · Power Query · DAX · Power BI</dd></div>
+          <div><dt>Scope</dt><dd>20 months · 7 pages · monthly refresh</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- Confidentiality + at a glance -->
+    <section class="section section-flush">
+      <div class="wrap">
+        <div class="note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+          <p><strong>The company's data is confidential.</strong> This page shows how I worked, not the company's numbers. Company, bank, branch, client and employee names are left out, and every chart and figure uses synthetic data that follows the real patterns.</p>
+        </div>
+        <div class="glance">
+          <div><b>7</b><span>report pages, one question each</span></div>
+          <div><b>5</b><span>tables in a star schema</span></div>
+          <div><b>60+</b><span>DAX measures</span></div>
+          <div><b>2</b><span>source data gaps found and raised</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. Brief -->
+    <section class="section" id="brief">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">01 · The brief</p>
+          <h2>One management question per page</h2>
+          <p class="lead">Management wanted to know whether the branch network signs good new merchants, not just many. The report had to run live in Power BI, be read in minutes by a VP, and hold up when the global board asks questions.</p>
+        </div>
+
+        <div class="tour" data-tabs>
+          <div class="tour-tabs" role="tablist" aria-label="Report pages">
+            <button type="button" role="tab" id="t-ov" aria-controls="p-ov" aria-selected="true"><span class="tab-num">01</span>Overview</button>
+            <button type="button" role="tab" id="t-gr" aria-controls="p-gr" aria-selected="false" tabindex="-1"><span class="tab-num">02</span>Growth</button>
+            <button type="button" role="tab" id="t-ac" aria-controls="p-ac" aria-selected="false" tabindex="-1"><span class="tab-num">03</span>Activation</button>
+            <button type="button" role="tab" id="t-ra" aria-controls="p-ra" aria-selected="false" tabindex="-1"><span class="tab-num">04</span>Ranking</button>
+            <button type="button" role="tab" id="t-pr" aria-controls="p-pr" aria-selected="false" tabindex="-1"><span class="tab-num">05</span>Products</button>
+            <button type="button" role="tab" id="t-bk" aria-controls="p-bk" aria-selected="false" tabindex="-1"><span class="tab-num">06</span>Bank network</button>
+            <button type="button" role="tab" id="t-rm" aria-controls="p-rm" aria-selected="false" tabindex="-1"><span class="tab-num">07</span>Sales reps</button>
+          </div>
+
+          <div class="card tour-panel" role="tabpanel" id="p-ov" aria-labelledby="t-ov" tabindex="0">
+            <p class="eyebrow">Overview</p>
+            <p class="q">How much new business did we sign, and where?</p>
+            <h4>On the page</h4>
+            <ul class="ticks">
+              <li>Headline cards: new merchants, card volume, active branches, activation rate, yearly value per merchant</li>
+              <li>Monthly volume next to the number of merchants signed</li>
+              <li>Share of volume by region</li>
+              <li>A compact scorecard: this year to date against the same months last year</li>
+            </ul>
+            <p class="design-note"><b>Design choice:</b> the opening page is visual. A text-heavy executive summary was tested and dropped, because readers found the visual overview faster.</p>
+          </div>
+          <div class="card tour-panel" role="tabpanel" id="p-gr" aria-labelledby="t-gr" tabindex="0" hidden>
+            <p class="eyebrow">Growth</p>
+            <p class="q">Are we growing, on the same months as last year?</p>
+            <h4>On the page</h4>
+            <ul class="ticks">
+              <li>New merchants and volume per month, this year against last year, with the growth line</li>
+              <li>Share of new merchants transacting each month</li>
+              <li>A region table: change in merchants, volume, and transacting rate in points</li>
+            </ul>
+            <p class="design-note"><b>Design choice:</b> no year slicer on this page, so every number is like for like. Clicking a month turns the cards into that month against the same month last year.</p>
+          </div>
+          <div class="card tour-panel" role="tabpanel" id="p-ac" aria-labelledby="t-ac" tabindex="0" hidden>
+            <p class="eyebrow">Activation</p>
+            <p class="q">Do new merchants actually start using the service?</p>
+            <h4>On the page</h4>
+            <ul class="ticks">
+              <li>Activation rate by region, green or red against the company average</li>
+              <li>The branches with the most merchants that never transacted</li>
+              <li>Transacting against non-transacting merchants, month by month</li>
+            </ul>
+            <p class="design-note"><b>Design choice:</b> best and weakest region only count regions with enough merchants, so a tiny region can't top the list by chance.</p>
+          </div>
+          <div class="card tour-panel" role="tabpanel" id="p-ra" aria-labelledby="t-ra" tabindex="0" hidden>
+            <p class="eyebrow">Ranking</p>
+            <p class="q">Which branches bring quantity, and which bring quality?</p>
+            <h4>On the page</h4>
+            <ul class="ticks">
+              <li>Top 10 and bottom 10 branches by a metric the reader picks: volume, merchants or activation</li>
+              <li>A quantity against quality scatter, coloured by dependence on the biggest client</li>
+              <li>An insight sentence on how concentrated the business is</li>
+            </ul>
+            <p class="design-note"><b>Design choice:</b> the bottom 10 only ranks branches with 10 or more new merchants, so tiny or special units don't fill the list.</p>
+          </div>
+          <div class="card tour-panel" role="tabpanel" id="p-pr" aria-labelledby="t-pr" tabindex="0" hidden>
+            <p class="eyebrow">Products</p>
+            <p class="q">Is Soft POS growing, and is it replacing the physical terminal?</p>
+            <h4>On the page</h4>
+            <ul class="ticks">
+              <li>Soft POS and e-commerce share by year, on the same months</li>
+              <li>The terminal mix of new merchants: physical only, both, Soft POS only, none</li>
+              <li>Soft POS adoption by region</li>
+            </ul>
+            <p class="design-note"><b>Design choice:</b> the first version compared a full year with eight months and overstated the growth. The page now compares the same months.</p>
+          </div>
+          <div class="card tour-panel" role="tabpanel" id="p-bk" aria-labelledby="t-bk" tabindex="0" hidden>
+            <p class="eyebrow">Bank network</p>
+            <p class="q">How does each part of the partner bank's network perform?</p>
+            <h4>On the page</h4>
+            <ul class="ticks">
+              <li>The bank's own structure as a slicer: division, then area</li>
+              <li>Activation by area, against the average</li>
+              <li>A scorecard that drills from division to area to branch, with the biggest client's share</li>
+              <li>Growth and Soft POS adoption by area</li>
+            </ul>
+            <p class="design-note"><b>Design choice:</b> using the bank's own hierarchy made the page familiar to its readers, and the drill-down exposed the single-client dependency.</p>
+          </div>
+          <div class="card tour-panel" role="tabpanel" id="p-rm" aria-labelledby="t-rm" tabindex="0" hidden>
+            <p class="eyebrow">Sales reps</p>
+            <p class="q">Do sales reps build steady business, or rely on one big client?</p>
+            <h4>On the page</h4>
+            <ul class="ticks">
+              <li>A rep table: new merchants, volume, yearly value per merchant, activation</li>
+              <li>The biggest client's share and the top two clients' share, coloured by risk</li>
+              <li>The quantity against quality scatter, one dot per rep</li>
+            </ul>
+            <p class="design-note"><b>Design choice:</b> added after the team review. Reps earn bonuses, and the business doesn't want a target reached by one client who could leave.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Build -->
+    <section class="section section-alt" id="build">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">02 · How I built it</p>
+          <h2>From raw exports to a model that refreshes itself</h2>
+          <p class="lead">The source was a set of monthly Excel exports. The goal was a model where next month's data is a refresh, not a rebuild.</p>
+        </div>
+        <ol class="pipeline">
+          <li class="pipe"><span class="step-num">01</span><b>Source</b><p>Monthly exports: card volume per merchant, and merchant details per year.</p></li>
+          <li class="pipe"><span class="step-num">02</span><b>Power Query</b><p>Sheets read by header name, wide layouts unpivoted, months appended, errors turned into "Not mapped".</p></li>
+          <li class="pipe"><span class="step-num">03</span><b>Validation</b><p>A check query ties each total to the source and counts the rows that could not be mapped.</p></li>
+          <li class="pipe"><span class="step-num">04</span><b>Star schema</b><p>Two fact tables at merchant by month, three dimensions, single-direction relationships.</p></li>
+          <li class="pipe"><span class="step-num">05</span><b>DAX</b><p>60+ measures: same-month growth, activation, value per merchant, concentration, insight text.</p></li>
+          <li class="pipe"><span class="step-num">06</span><b>Report and story</b><p>7 pages, notes for every visual, and a written monthly refresh routine.</p></li>
+        </ol>
+
+        <div class="model">
+          <figure class="model-fig">
+            <div class="model-scroll">
+              <svg viewBox="0 0 640 404" role="img" aria-labelledby="model-title model-desc">
+                <title id="model-title">The data model</title>
+                <desc id="model-desc">Star schema. Fact_Volume and Fact_MID_Status hold one row per merchant per month and link to Dim_MID and Dim_Date. Dim_MID links to Dim_Branch. An inactive relationship links the merchant's signing date to Dim_Date.</desc>
+                <g>
+                  <path class="m-rel" d="M100 112V150"/>
+                  <path class="m-rel" d="M180 210C205 210 200 84 232 84"/>
+                  <path class="m-rel" d="M180 210C205 210 200 284 232 284"/>
+                  <path class="m-rel" d="M408 84C440 84 435 210 460 210"/>
+                  <path class="m-rel" d="M408 284C440 284 435 210 460 210"/>
+                  <path class="m-rel-inactive" d="M100 270C100 400 540 400 540 270"/>
+                  <text class="m-tag" x="320" y="396" text-anchor="middle">signing date · inactive, switched on with USERELATIONSHIP</text>
+                  <text class="m-card" x="108" y="136">1 : many</text>
+                </g>
+                <g transform="translate(20 16)">
+                  <rect class="m-box" width="160" height="96" rx="10"/>
+                  <path class="m-head-dim" d="M0 10a10 10 0 0 1 10-10h140a10 10 0 0 1 10 10v18H0z"/>
+                  <text class="m-title" x="12" y="19">Dim_Branch</text>
+                  <text class="m-key" x="12" y="48">Branch Key</text>
+                  <text class="m-col" x="12" y="66">Branch · Region</text>
+                  <text class="m-col" x="12" y="84">Account manager</text>
+                </g>
+                <g transform="translate(20 150)">
+                  <rect class="m-box" width="160" height="120" rx="10"/>
+                  <path class="m-head-dim" d="M0 10a10 10 0 0 1 10-10h140a10 10 0 0 1 10 10v18H0z"/>
+                  <text class="m-title" x="12" y="19">Dim_MID</text>
+                  <text class="m-key" x="12" y="48">MID (merchant)</text>
+                  <text class="m-col" x="12" y="66">Signing date</text>
+                  <text class="m-col" x="12" y="84">Branch Key · Rep</text>
+                  <text class="m-col" x="12" y="102">Products · Segment</text>
+                </g>
+                <g transform="translate(232 36)">
+                  <rect class="m-box" width="176" height="96" rx="10"/>
+                  <path class="m-head-fact" d="M0 10a10 10 0 0 1 10-10h156a10 10 0 0 1 10 10v18H0z"/>
+                  <text class="m-title" x="12" y="19">Fact_Volume</text>
+                  <text class="m-key" x="12" y="48">MID · Month</text>
+                  <text class="m-col" x="12" y="66">Volume (€)</text>
+                  <text class="m-col" x="12" y="84">own signing year only</text>
+                </g>
+                <g transform="translate(232 236)">
+                  <rect class="m-box" width="176" height="96" rx="10"/>
+                  <path class="m-head-fact" d="M0 10a10 10 0 0 1 10-10h156a10 10 0 0 1 10 10v18H0z"/>
+                  <text class="m-title" x="12" y="19">Fact_MID_Status</text>
+                  <text class="m-key" x="12" y="48">MID · Month</text>
+                  <text class="m-col" x="12" y="66">Transacting: yes / no</text>
+                  <text class="m-col" x="12" y="84">from signing month on</text>
+                </g>
+                <g transform="translate(460 162)">
+                  <rect class="m-box" width="160" height="108" rx="10"/>
+                  <path class="m-head-dim" d="M0 10a10 10 0 0 1 10-10h140a10 10 0 0 1 10 10v18H0z"/>
+                  <text class="m-title" x="12" y="19">Dim_Date</text>
+                  <text class="m-key" x="12" y="48">Date</text>
+                  <text class="m-col" x="12" y="66">Year · Month</text>
+                  <text class="m-col" x="12" y="84">Month number</text>
+                </g>
+              </svg>
+            </div>
+            <figcaption><span><i></i>active, one to many</span><span><i class="dash"></i>inactive (role-playing date)</span><span>Blue = dimension · Orange = fact</span></figcaption>
+          </figure>
+
+          <ul class="decisions">
+            <li><b>One grain for both facts</b><span>Volume and activity are both stored per merchant per month, so they line up in every visual without tricks.</span></li>
+            <li><b>Two dates, one calendar</b><span>The signing date relationship is inactive and switched on inside the measures. The year slicer means "signing year", while monthly charts use activity months.</span></li>
+            <li><b>Each merchant counted in its own year</b><span>A merchant is measured only in the year it was signed, so this year's and last year's new merchants compare fairly.</span></li>
+            <li><b>No guessed mappings</b><span>The same branch code could sit in different regions across rows. A composite branch key keeps the mapping exactly as in the source.</span></li>
+            <li><b>Gaps are labelled, not hidden</b><span>Blanks and error cells become "Not mapped", which is counted and shown. A bad cell never breaks the refresh.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Insights -->
+    <section class="section" id="insights">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">03 · What the data said</p>
+          <h2>Six insights, and what to do about them</h2>
+          <p class="lead">Each one follows the same pattern: what I found, why it matters, and what to do next. All figures below are synthetic; the patterns are real.</p>
+        </div>
+
+        <article class="card insight">
+          <div class="insight-text">
+            <span class="insight-num">Insight 01 · Growth</span>
+            <h3>Fewer new merchants, but each one is worth more</h3>
+            <p>On the same months as last year, the network signed fewer new merchants, but they brought more card volume. Signings kept pace until spring, then fell behind, with the deepest gap in summer.</p>
+            <div class="sowhat"><b>So what</b>A target based on the number of merchants would call this a bad year. I added yearly volume per merchant as the measure of quality, so the report rewards value, not only sign-ups.</div>
+          </div>
+          <div class="chart-block" id="chart-signings">
+            <div class="tiles">
+              <div class="tile"><span class="tile-label">New merchants</span><span class="tile-value down">−10%</span><span class="tile-sub">same months</span></div>
+              <div class="tile"><span class="tile-label">Card volume</span><span class="tile-value up">+20%</span><span class="tile-sub">same months</span></div>
+              <div class="tile"><span class="tile-label">Value per merchant</span><span class="tile-value up">+33%</span><span class="tile-sub">yearly</span></div>
+            </div>
+            <p class="chart-title">New merchants signed per month</p>
+            <p class="chart-sub">January to August, synthetic data</p>
+            <div class="legend"><span class="key"><span class="sw-rect sw-last"></span>Last year</span><span class="key"><span class="sw-rect sw-this"></span>This year</span></div>
+            <div class="chart"></div>
+          </div>
+        </article>
+
+        <article class="card insight">
+          <div class="insight-text">
+            <span class="insight-num">Insight 02 · Concentration</span>
+            <h3>The growth headline leaned on one client</h3>
+            <p>Drilling into the bank's network, one small group of merchants showed a very high value per merchant. Behind it was a single new client that carried a large share of the whole year's new volume.</p>
+            <div class="sowhat"><b>So what</b>Report growth with and without the biggest client, and treat dependence on one client as a risk, not a win. I added the biggest client's share to the scorecards.</div>
+          </div>
+          <div>
+            <div class="tiles two">
+              <div class="tile"><span class="tile-label">Volume growth, all merchants</span><span class="tile-value up">+20%</span><span class="tile-sub">as first reported</span></div>
+              <div class="tile"><span class="tile-label">Without the biggest new client</span><span class="tile-value">+8%</span><span class="tile-sub">the underlying trend</span></div>
+            </div>
+            <div class="example"><b>Why one number isn't enough:</b> a single client can make the network look like it grew strongly. If that client leaves or slows down, most of the growth goes with it. Both numbers belong on the page.</div>
+          </div>
+        </article>
+
+        <article class="card insight insight-wide">
+          <div class="insight-text narrow">
+            <span class="insight-num">Insight 03 · Quality</span>
+            <h3>Quantity and quality are different questions</h3>
+            <p>Each mark is a branch. Further right means more new merchants; higher means more yearly volume per merchant. The shape shows how much of the branch's volume comes from its single biggest client. Hover over a mark for details.</p>
+            <div class="example"><b>Example from the team review:</b> 10 merchants, where 9 bring €10K a year and one brings €910K. The average is €100K per merchant and looks excellent, but 91% of the volume sits with one client. If it leaves, the average falls to €10K.</div>
+          </div>
+          <div class="chart-block scatter-wrap" id="chart-scatter">
+            <p class="chart-title">Quantity against quality, by branch</p>
+            <p class="chart-sub">Up: yearly volume per merchant (log scale) · synthetic data</p>
+            <div class="legend" data-legend="risk"></div>
+            <div class="chart"></div>
+            <div class="risk-row"></div>
+          </div>
+          <div class="sowhat"><b>So what</b>Top right with a green circle is the target: many merchants, high value, no single-client dependency. High marks with a red triangle look great on average but hang on one client.</div>
+        </article>
+
+        <article class="card insight">
+          <div class="insight-text">
+            <span class="insight-num">Insight 04 · Fair comparison</span>
+            <h3>A fair comparison turned 3x into 2x</h3>
+            <p>The first comparison said Soft POS adoption had tripled. It compared a full year with eight months, and the last months of the earlier year had almost no Soft POS recorded. On the same months, adoption roughly doubled. Almost every Soft POS merchant also kept a physical terminal.</p>
+            <p>Activation got the same care. A merchant signed in August has had less time to start than one signed in January, so I compared the share transacting each month on the same months, never the overall rate.</p>
+            <div class="sowhat"><b>So what</b>Soft POS sells as an add-on, not a replacement. The 2x figure survives a board question; 3x would not have. The recording gap went to the data owner.</div>
+          </div>
+          <div class="chart-block" id="chart-rate">
+            <p class="chart-title">Share of new merchants transacting each month</p>
+            <p class="chart-sub">Same months, synthetic data · the gap narrows during the year</p>
+            <div class="legend"><span class="key"><span class="sw-line sw-last"></span>Last year</span><span class="key"><span class="sw-line sw-this"></span>This year</span></div>
+            <div class="chart"></div>
+          </div>
+        </article>
+
+        <div class="pair">
+          <article class="card">
+            <span class="insight-num">Insight 05 · Seasonality</span>
+            <h3>Big but leaky: the tourist branches</h3>
+            <p>The branches that bring the most volume also top the list of merchants that never transact. Many sit in tourist areas: big sellers in season, closed in winter, so merchants signed late in the year look inactive.</p>
+            <div class="sowhat"><b>So what</b>Judge seasonal branches within their season, and follow up activation before the season starts rather than after it ends.</div>
+          </article>
+          <article class="card">
+            <span class="insight-num">Insight 06 · Sales reps</span>
+            <h3>Same volume, very different risk</h3>
+            <p>Two reps each bring €1.0M. One has 20 merchants and the biggest brings 60% of the volume. The other has 80 merchants and the biggest brings 10%. On a volume ranking they look the same.</p>
+            <div class="sowhat"><b>So what</b>A rep page with the biggest and top-two client share, coloured by risk, gives management a fair input to bonus decisions.</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. DAX -->
+    <section class="section section-alt" id="dax">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">04 · Under the hood</p>
+          <h2>The measures behind the insights</h2>
+          <p class="lead">Four of the 60+ measures, as written in the model. Each one is short, readable and does one job. MID means merchant ID.</p>
+        </div>
+        <div class="code" data-tabs>
+          <div class="code-tabs" role="tablist" aria-label="DAX measures">
+            <button type="button" role="tab" id="ct-1" aria-controls="cp-1" aria-selected="true">MIDs Signed</button>
+            <button type="button" role="tab" id="ct-2" aria-controls="cp-2" aria-selected="false" tabindex="-1">MIDs YoY %</button>
+            <button type="button" role="tab" id="ct-3" aria-controls="cp-3" aria-selected="false" tabindex="-1">Annual Volume per MID</button>
+            <button type="button" role="tab" id="ct-4" aria-controls="cp-4" aria-selected="false" tabindex="-1">Biggest Client Share</button>
+          </div>
+          <div class="code-panel" role="tabpanel" id="cp-1" aria-labelledby="ct-1">
+<pre tabindex="0"><code class="dax">
+MIDs Signed =
+CALCULATE(
+    COUNTROWS(Dim_MID),
+    USERELATIONSHIP(Dim_Date[Date], Dim_MID[Date MID Signed])
+)
+</code></pre>
+            <p class="code-explain"><b>Counts new merchants by signing date.</b> The signing-date relationship is inactive in the model and switched on only here, so the same calendar serves both signing dates and activity months.</p>
+          </div>
+          <div class="code-panel" role="tabpanel" id="cp-2" aria-labelledby="ct-2" hidden>
+<pre tabindex="0"><code class="dax">
+MIDs YoY % =
+VAR m = [Last Month No]
+VAR a = CALCULATE([MIDs Signed 2025], KEEPFILTERS(Dim_Date[Month No] &lt;= m))
+VAR b = CALCULATE([MIDs Signed 2026], KEEPFILTERS(Dim_Date[Month No] &lt;= m))
+RETURN IF(NOT ISBLANK(b), DIVIDE(b - a, a))
+</code></pre>
+            <p class="code-explain"><b>Growth on the same months only.</b> Both years are cut at the last month with data, so January to August is compared with January to August. It extends by itself when the next month loads, and on a month axis it compares each month with the same month last year.</p>
+          </div>
+          <div class="code-panel" role="tabpanel" id="cp-3" aria-labelledby="ct-3" hidden>
+<pre tabindex="0"><code class="dax">
+Annual Volume per MID =
+AVERAGEX(
+    CALCULATETABLE(VALUES(Dim_MID[MID]), USERELATIONSHIP(Dim_Date[Date], Dim_MID[Date MID Signed])),
+    VAR months = CALCULATE(COUNTROWS(Fact_MID_Status))
+    VAR vol = CALCULATE(SUM(Fact_Volume[Volume])) + 0
+    RETURN DIVIDE(vol, months) * 12
+)
+</code></pre>
+            <p class="code-explain"><b>The quality measure: value per merchant, annualised.</b> Each merchant's volume is divided by the months it has been live and scaled to a year, then averaged. A merchant signed in November is not punished for having only two months, and merchants with no volume count as zero.</p>
+          </div>
+          <div class="code-panel" role="tabpanel" id="cp-4" aria-labelledby="ct-4" hidden>
+<pre tabindex="0"><code class="dax">
+Biggest Client Share =
+VAR clients =
+    ADDCOLUMNS(
+        CALCULATETABLE(VALUES(Dim_MID[MID]), USERELATIONSHIP(Dim_Date[Date], Dim_MID[Date MID Signed])),
+        "@vol", CALCULATE(SUM(Fact_Volume[Volume]))
+    )
+RETURN DIVIDE(MAXX(clients, [@vol]), SUMX(clients, [@vol]))
+</code></pre>
+            <p class="code-explain"><b>The risk measure: how much hangs on one client.</b> For any branch, rep or region in context, it builds a table of its merchants with their volume, then divides the biggest by the total. A second measure turns it into red, amber or green for the visuals.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Trust -->
+    <section class="section" id="trust">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">05 · Trust</p>
+          <h2>How I made sure the numbers hold</h2>
+          <p class="lead">A board audience will test the numbers. These checks ran before anything was presented.</p>
+        </div>
+        <ul class="checks">
+          <li><b>Every total ties to the source.</b> New merchants and volume per year are checked in a validation query after each refresh.</li>
+          <li><b>No guessed mappings.</b> Region, manager and branch come exactly from the source rows. Blanks become "Not mapped" and are counted.</li>
+          <li><b>Same months for every year-on-year number.</b> Rates are compared in percentage points, never as a percent of a percent.</li>
+          <li><b>Fair cohorts.</b> Each merchant is measured only in the year it was signed, and overall activation is never compared across years of different length.</li>
+          <li><b>Data gaps raised, not buried.</b> Two gaps in the source were kept out of the comparisons and sent to the data owner.</li>
+          <li><b>Every presented number re-checked.</b> Each figure in the presenter notes was matched against the live visuals before the meeting.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. Iteration -->
+    <section class="section section-alt" id="iteration">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">06 · Iteration</p>
+          <h2>Built with the audience, not just for it</h2>
+        </div>
+        <ol class="timeline">
+          <li><b>First build</b><span>The model, the first five pages and the growth story on the same months.</span></li>
+          <li><b>Team review</b><span>Feedback: <q>quality should mean value per merchant, and show how much hangs on one client.</q> I rebuilt the quality measure and the branch scatter around it.</span></li>
+          <li><b>Bank network page</b><span>The partner bank's own structure, which surfaced the single-client dependency.</span></li>
+          <li><b>A simpler opening</b><span>A text-heavy executive summary was replaced by the visual overview and a compact scorecard.</span></li>
+          <li><b>Presented live in Power BI</b><span>With notes for every visual: what it shows, how it is calculated, an example, and the line to say.</span></li>
+          <li><b>Sales reps page and monthly refresh</b><span>The rep risk view, and a written routine for loading each new month.</span></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 7. What it shows -->
+    <section class="section" id="shows">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">07 · In short</p>
+          <h2>What this project shows</h2>
+        </div>
+        <div class="grid-4">
+          <article class="card"><h3>End-to-end ownership</h3><p>From messy monthly exports to a validated model, a live report and the presentation.</p></article>
+          <article class="card"><h3>Business framing</h3><p>Every page answers a management question, and the measures follow the business, like value per merchant.</p></article>
+          <article class="card"><h3>Analytical care</h3><p>Fair comparisons, outlier and concentration checks, and honest handling of data gaps.</p></article>
+          <article class="card"><h3>Clear communication</h3><p>Visual first pages, insight sentences that update themselves, and notes anyone can present from.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact">
+      <div class="wrap">
+        <p class="eyebrow">Next step</p>
+        <h2>Want to see how I'd approach your data?</h2>
+        <p>I'm happy to walk through this project in more depth, using sample data.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="mailto:athanasarosd@gmail.com?subject=Branch%20Performance%20case%20study">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email me</a>
+          <a class="btn btn-ghost-dark" href="https://www.linkedin.com/in/dimitris-athanasaros/" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn btn-ghost-dark" href="./#work">Back to all work</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-foot">
+    <div class="wrap">
+      <span>© <span data-year>2026</span> Dimitris Athanasaros</span>
+      <span>All charts and figures on this page are synthetic · <a href="#main">Back to top</a></span>
+    </div>
+  </footer>
+
+  <script src="js/site.js"></script>
+  <script src="js/charts.js"></script>
+</body>
+</html>
