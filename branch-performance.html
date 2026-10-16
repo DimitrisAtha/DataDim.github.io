@@ -28,6 +28,7 @@
       <a class="brand" href="./" aria-label="Dimitris Athanasaros, home"><span class="mono-badge" aria-hidden="true">DA</span><span class="brand-name">Dimitris Athanasaros</span></a>
       <nav aria-label="Case study sections">
         <ul class="nav-links">
+          <li><a href="dashboard.html">Live dashboard</a></li>
           <li><a href="#brief">Brief</a></li>
           <li><a href="#build">Build</a></li>
           <li><a href="#insights">Insights</a></li>
@@ -45,6 +46,10 @@
         <p class="eyebrow">Case study · Payments · 2026</p>
         <h1>Branch Performance: are new merchants worth more, or just more?</h1>
         <p class="lead">An executive Power BI report on new-merchant acquisition across a national branch network. I built it end to end: the data model, the DAX, the report pages and the presenter notes, for a VP and then the global board.</p>
+        <div class="cta-row cs-cta">
+          <a class="btn btn-primary" href="dashboard.html">Open the live dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn-ghost-dark" href="#insights">Jump to the insights</a>
+        </div>
         <dl class="meta-grid">
           <div><dt>Role</dt><dd>Sole analyst, end to end</dd></div>
           <div><dt>Audience</dt><dd>A VP, then the global board</dd></div>
@@ -101,6 +106,7 @@
               <li>A compact scorecard: this year to date against the same months last year</li>
             </ul>
             <p class="design-note"><b>Design choice:</b> the opening page is visual. A text-heavy executive summary was tested and dropped, because readers found the visual overview faster.</p>
+            <a class="demo-link" href="dashboard.html#page=overview">Open this page in the live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
           <div class="card tour-panel" role="tabpanel" id="p-gr" aria-labelledby="t-gr" tabindex="0" hidden>
             <p class="eyebrow">Growth</p>
@@ -112,6 +118,7 @@
               <li>A region table: change in merchants, volume, and transacting rate in points</li>
             </ul>
             <p class="design-note"><b>Design choice:</b> no year slicer on this page, so every number is like for like. Clicking a month turns the cards into that month against the same month last year.</p>
+            <a class="demo-link" href="dashboard.html#page=growth">Open this page in the live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
           <div class="card tour-panel" role="tabpanel" id="p-ac" aria-labelledby="t-ac" tabindex="0" hidden>
             <p class="eyebrow">Activation</p>
@@ -123,6 +130,7 @@
               <li>Transacting against non-transacting merchants, month by month</li>
             </ul>
             <p class="design-note"><b>Design choice:</b> best and weakest region only count regions with enough merchants, so a tiny region can't top the list by chance.</p>
+            <a class="demo-link" href="dashboard.html#page=activation">Open this page in the live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
           <div class="card tour-panel" role="tabpanel" id="p-ra" aria-labelledby="t-ra" tabindex="0" hidden>
             <p class="eyebrow">Ranking</p>
@@ -134,6 +142,7 @@
               <li>An insight sentence on how concentrated the business is</li>
             </ul>
             <p class="design-note"><b>Design choice:</b> the bottom 10 only ranks branches with 10 or more new merchants, so tiny or special units don't fill the list.</p>
+            <a class="demo-link" href="dashboard.html#page=ranking">Open this page in the live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
           <div class="card tour-panel" role="tabpanel" id="p-pr" aria-labelledby="t-pr" tabindex="0" hidden>
             <p class="eyebrow">Products</p>
@@ -145,6 +154,7 @@
               <li>Soft POS adoption by region</li>
             </ul>
             <p class="design-note"><b>Design choice:</b> the first version compared a full year with eight months and overstated the growth. The page now compares the same months.</p>
+            <a class="demo-link" href="dashboard.html#page=products">Open this page in the live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
           <div class="card tour-panel" role="tabpanel" id="p-bk" aria-labelledby="t-bk" tabindex="0" hidden>
             <p class="eyebrow">Bank network</p>
@@ -168,6 +178,7 @@
               <li>The quantity against quality scatter, one dot per rep</li>
             </ul>
             <p class="design-note"><b>Design choice:</b> added after the team review. Reps earn bonuses, and the business doesn't want a target reached by one client who could leave.</p>
+            <a class="demo-link" href="dashboard.html#page=reps">Open this page in the live demo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           </div>
         </div>
       </div>
@@ -322,6 +333,7 @@
             <div class="chart"></div>
             <div class="risk-row"></div>
           </div>
+          <a class="demo-link" href="dashboard.html#page=ranking">Filter this view by year, region or manager in the live dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
           <div class="sowhat"><b>So what</b>Top right with a green circle is the target: many merchants, high value, no single-client dependency. High marks with a red triangle look great on average but hang on one client.</div>
         </article>
 
@@ -480,9 +492,8 @@ RETURN DIVIDE(MAXX(clients, [@vol]), SUMX(clients, [@vol]))
         <h2>Want to see how I'd approach your data?</h2>
         <p>I'm happy to walk through this project in more depth, using sample data.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="mailto:athanasarosd@gmail.com?subject=Branch%20Performance%20case%20study">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Email me</a>
-          <a class="btn btn-ghost-dark" href="https://www.linkedin.com/in/dimitris-athanasaros/" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn btn-primary" href="dashboard.html">Open the live dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          <a class="btn btn-ghost-dark" href="mailto:athanasarosd@gmail.com?subject=Branch%20Performance%20case%20study">Email me</a>
           <a class="btn btn-ghost-dark" href="./#work">Back to all work</a>
         </div>
       </div>
@@ -497,6 +508,8 @@ RETURN DIVIDE(MAXX(clients, [@vol]), SUMX(clients, [@vol]))
   </footer>
 
   <script src="js/site.js"></script>
+  <script src="js/demo-data.js"></script>
+  <script src="js/demo-model.js"></script>
   <script src="js/charts.js"></script>
 </body>
 </html>

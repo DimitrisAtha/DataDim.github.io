@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live dashboards · Dimitris Athanasaros</title>
+  <meta name="description" content="Interactive dashboards: a Branch Performance report with filters and cross-filtering (synthetic data, same logic as the real Power BI model), plus three Tableau dashboards.">
+  <meta name="author" content="Dimitris Athanasaros">
+  <meta name="theme-color" content="#0b1a2c">
+  <link rel="canonical" href="https://dimitrisatha.github.io/DataDim.github.io/dashboard.html">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Live dashboards · Dimitris Athanasaros">
+  <meta property="og:description" content="Filter, click and drill into a Branch Performance report built on the same logic as a real executive Power BI model.">
+  <meta property="og:url" content="https://dimitrisatha.github.io/DataDim.github.io/dashboard.html">
+  <meta property="og:image" content="https://dimitrisatha.github.io/DataDim.github.io/images/og-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="./" aria-label="Dimitris Athanasaros, home"><span class="mono-badge" aria-hidden="true">DA</span><span class="brand-name">Dimitris Athanasaros</span></a>
+      <nav aria-label="Main">
+        <ul class="nav-links">
+          <li><a href="./#work">Work</a></li>
+          <li><a href="branch-performance.html">Case study</a></li>
+          <li><a href="./#skills">Skills</a></li>
+          <li><a href="./#contact">Contact</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-sm btn-primary nav-cta" href="mailto:athanasarosd@gmail.com?subject=Your%20dashboards">Get in touch</a>
+    </div>
+  </header>
+
+  <main id="main" class="dash">
+    <div class="dash-top">
+      <div class="dash-top-in">
+        <h1>Live dashboards</h1>
+        <div class="dash-switch" role="tablist" aria-label="Choose a dashboard">
+          <button type="button" role="tab" id="d-bp" data-dash="bp" aria-controls="dash-bp" aria-selected="true"><b>Branch Performance</b><span>Power BI report · demo</span></button>
+          <button type="button" role="tab" id="d-covid" data-dash="covid" aria-controls="dash-covid" aria-selected="false" tabindex="-1"><b>Covid-19</b><span>SQL · Tableau</span></button>
+          <button type="button" role="tab" id="d-business" data-dash="business" aria-controls="dash-business" aria-selected="false" tabindex="-1"><b>Business Performance</b><span>Tableau</span></button>
+          <button type="button" role="tab" id="d-store" data-dash="store" aria-controls="dash-store" aria-selected="false" tabindex="-1"><b>Store Performance</b><span>Tableau</span></button>
+        </div>
+        <p class="dash-note" id="dash-note"><b>Synthetic data</b>Same rules and measures as the real report</p>
+      </div>
+    </div>
+
+    <!-- Branch Performance demo -->
+    <section class="report" id="dash-bp" role="tabpanel" aria-labelledby="d-bp">
+      <div class="report-bar">
+        <div class="page-tabs" role="tablist" aria-label="Report pages">
+          <button type="button" role="tab" data-page="overview" aria-selected="true">Overview</button>
+          <button type="button" role="tab" data-page="growth" aria-selected="false" tabindex="-1">Growth</button>
+          <button type="button" role="tab" data-page="activation" aria-selected="false" tabindex="-1">Activation</button>
+          <button type="button" role="tab" data-page="ranking" aria-selected="false" tabindex="-1">Ranking</button>
+          <button type="button" role="tab" data-page="products" aria-selected="false" tabindex="-1">Products</button>
+          <button type="button" role="tab" data-page="reps" aria-selected="false" tabindex="-1">Sales reps</button>
+        </div>
+        <div class="filters" role="group" aria-label="Filters">
+          <div class="seg" role="group" aria-label="Signing year" id="f-year">
+            <button type="button" data-year="0" aria-pressed="true">All years</button>
+            <button type="button" data-year="2025" aria-pressed="false">2025</button>
+            <button type="button" data-year="2026" aria-pressed="false">2026</button>
+          </div>
+          <label class="sel">Region <select id="f-region"></select></label>
+          <label class="sel">Account manager <select id="f-am"></select></label>
+          <span class="fchips" id="f-chips"></span>
+          <button type="button" class="reset" id="f-reset">Reset</button>
+        </div>
+      </div>
+
+      <div class="canvas">
+        <!-- Overview -->
+        <div class="page" data-page="overview">
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="kpis" data-kpis></div>
+          <div class="grid">
+            <div class="viz c-8">
+              <div class="viz-head"><div><p class="viz-title" data-title="ov-trend">Monthly card volume of new merchants</p><p class="viz-sub">Each merchant counted only in its signing year, so the line restarts in January 2026</p></div>
+                <div class="seg sm" role="group" aria-label="Show" id="ov-toggle"><button type="button" data-trend="vol" aria-pressed="true">Volume</button><button type="button" data-trend="n" aria-pressed="false">New merchants</button></div></div>
+              <div class="viz-body" id="ov-trend"></div>
+            </div>
+            <div class="viz c-4">
+              <div class="viz-head"><div><p class="viz-title">Share of volume by region</p><p class="viz-sub">Click a region to filter the report</p></div></div>
+              <div class="viz-body" id="ov-region"></div>
+            </div>
+            <div class="viz c-7">
+              <div class="viz-head"><div><p class="viz-title">Scorecard: this year to date against the same months</p><p class="viz-sub">Ignores the year filter. Full 2025 is context only; the change compares Jan to Aug</p></div></div>
+              <div class="table-wrap" id="ov-score"></div>
+            </div>
+            <div class="viz c-5">
+              <div class="viz-head"><div><p class="viz-title">Top 10 branches by volume</p><p class="viz-sub">Click a branch to filter the report</p></div></div>
+              <div class="viz-body" id="ov-branches"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Growth -->
+        <div class="page" data-page="growth" hidden>
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="kpis" data-kpis></div>
+          <div class="grid">
+            <div class="viz c-6">
+              <div class="viz-head"><div><p class="viz-title">New merchants signed per month</p><p class="viz-sub">Click a month: the cards compare that month only</p></div></div>
+              <div class="viz-body" id="gr-sign"></div>
+            </div>
+            <div class="viz c-6">
+              <div class="viz-head"><div><p class="viz-title">Card volume of new merchants per month</p><p class="viz-sub">Volume of each year's new merchants, same months</p></div></div>
+              <div class="viz-body" id="gr-vol"></div>
+            </div>
+            <div class="viz c-5">
+              <div class="viz-head"><div><p class="viz-title">Share of new merchants transacting each month</p><p class="viz-sub">Transacted that month / all signed so far that year</p></div></div>
+              <div class="viz-body" id="gr-rate"></div>
+            </div>
+            <div class="viz c-7">
+              <div class="viz-head"><div><p class="viz-title">Regions: this year against the same months last year</p><p class="viz-sub">Click a row to filter the report</p></div></div>
+              <div class="table-wrap" id="gr-region"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activation -->
+        <div class="page" data-page="activation" hidden>
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="kpis" data-kpis></div>
+          <div class="grid">
+            <div class="viz c-6">
+              <div class="viz-head"><div><p class="viz-title">Activation rate by region</p><p class="viz-sub">Share that transacted at least once · green at or above the average, red below</p></div></div>
+              <div class="viz-body" id="ac-region"></div>
+            </div>
+            <div class="viz c-6">
+              <div class="viz-head"><div><p class="viz-title">Top 10 branches by merchants that never transacted</p><p class="viz-sub">A count, so big branches show up · click to filter</p></div></div>
+              <div class="viz-body" id="ac-nt"></div>
+            </div>
+            <div class="viz c-12">
+              <div class="viz-head"><div><p class="viz-title">Transacting and not transacting, month by month</p><p class="viz-sub">Each month: all merchants signed so far that year</p></div></div>
+              <div class="viz-body" id="ac-monthly"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ranking -->
+        <div class="page" data-page="ranking" hidden>
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="grid">
+            <div class="stack c-5 r-2">
+              <div class="viz">
+                <div class="viz-head"><div><p class="viz-title" id="rk-top-title">Top 10 branches</p><p class="viz-sub">Click a branch to filter the report</p></div>
+                  <div class="seg sm" role="group" aria-label="Rank by" id="rk-metric"><button type="button" data-metric="vol" aria-pressed="true">Volume</button><button type="button" data-metric="n" aria-pressed="false">Merchants</button><button type="button" data-metric="t" aria-pressed="false">Activation</button></div></div>
+                <div class="viz-body" id="rk-top"></div>
+              </div>
+              <div class="viz">
+                <div class="viz-head"><div><p class="viz-title" id="rk-bottom-title">Bottom 10 branches</p><p class="viz-sub">Only branches with 10 or more new merchants</p></div></div>
+                <div class="viz-body" id="rk-bottom"></div>
+              </div>
+            </div>
+            <div class="viz c-7 r-2 tall">
+              <div class="viz-head"><div><p class="viz-title">Quantity against quality, by branch</p><p class="viz-sub">Right: more new merchants · up: more yearly volume per merchant · size: volume · shape and colour: share of the biggest client</p></div></div>
+              <div class="viz-body" id="rk-scatter"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Products -->
+        <div class="page" data-page="products" hidden>
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="kpis" data-kpis></div>
+          <div class="grid">
+            <div class="viz c-5">
+              <div class="viz-head"><div><p class="viz-title">Soft POS and e-commerce share, 2025 against 2026</p><p class="viz-sub" id="pr-share-sub">Same months: Jan to Aug in both years</p></div>
+                <div class="seg sm" role="group" aria-label="Compare" id="pr-compare"><button type="button" data-compare="same" aria-pressed="true">Same months</button><button type="button" data-compare="full" aria-pressed="false">Full year</button></div></div>
+              <div class="viz-body" id="pr-share"></div>
+            </div>
+            <div class="viz c-7">
+              <div class="viz-head"><div><p class="viz-title">Terminals of 2026 new merchants</p><p class="viz-sub">Four separate groups that add up to 100% · 2026 only (2025 terminal counts are incomplete)</p></div></div>
+              <div class="viz-body" id="pr-mix"></div>
+            </div>
+            <div class="viz c-12">
+              <div class="viz-head"><div><p class="viz-title">Soft POS share by region</p><p class="viz-sub">Click a region to filter the report</p></div></div>
+              <div class="viz-body" id="pr-region"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sales reps -->
+        <div class="page" data-page="reps" hidden>
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="kpis" data-kpis></div>
+          <div class="grid">
+            <div class="viz c-7 r-2">
+              <div class="viz-head"><div><p class="viz-title">New merchants per sales rep</p><p class="viz-sub">Reps with 10 or more new merchants · click a column to sort, a row to filter</p></div></div>
+              <div class="table-wrap" id="rp-table"></div>
+            </div>
+            <div class="viz c-5 r-2 tall">
+              <div class="viz-head"><div><p class="viz-title">Quantity against quality, by rep</p><p class="viz-sub">Top right and green: many merchants, high value, no single-client dependency</p></div></div>
+              <div class="viz-body" id="rp-scatter"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tableau dashboards (loaded only when opened) -->
+    <section class="embed" id="dash-covid" role="tabpanel" aria-labelledby="d-covid" hidden data-embed="WorkEarlyHealthCareTasks/DashTaskHealth">
+      <div class="embed-head">
+        <div>
+          <h2>Covid-19: five months of the pandemic</h2>
+          <p>Data pulled with SQL from four related World Health Organization tables, then visualised in Tableau: spread on a world map, cases over time, and the ten countries with the most cases. Move the date control and hover the map.</p>
+        </div>
+        <a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyHealthCareTasks/DashTaskHealth" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+      <div class="embed-frame"><p class="loading">Loading the Tableau dashboard…</p></div>
+    </section>
+    <section class="embed" id="dash-business" role="tabpanel" aria-labelledby="d-business" hidden data-embed="WorkEarlyFinalAssignmentAD/DashFinal">
+      <div class="embed-head">
+        <div>
+          <h2>Business Performance: sales, profit and orders</h2>
+          <p>Sales, profit and orders across customer segments, product categories, ship modes and cities. Click a legend item or a mark to highlight it across the dashboard.</p>
+        </div>
+        <a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyFinalAssignmentAD/DashFinal" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+      <div class="embed-frame"><p class="loading">Loading the Tableau dashboard…</p></div>
+    </section>
+    <section class="embed" id="dash-store" role="tabpanel" aria-labelledby="d-store" hidden data-embed="Final_dashboard_workearly/Dashboard1">
+      <div class="embed-head">
+        <div>
+          <h2>Store Performance: sales by location</h2>
+          <p>Bottle sales by store and ZIP code on a map, with each store's share of total sales in ranked tables. Hover the map and the tables for details.</p>
+        </div>
+        <a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/Final_dashboard_workearly/Dashboard1" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a>
+      </div>
+      <div class="embed-frame"><p class="loading">Loading the Tableau dashboard…</p></div>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
+  <script src="js/demo-data.js"></script>
+  <script src="js/demo-model.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

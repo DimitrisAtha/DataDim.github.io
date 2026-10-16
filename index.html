@@ -28,6 +28,7 @@
       <a class="brand" href="./" aria-label="Dimitris Athanasaros, home"><span class="mono-badge" aria-hidden="true">DA</span><span class="brand-name">Dimitris Athanasaros</span></a>
       <nav aria-label="Main">
         <ul class="nav-links">
+          <li><a href="dashboard.html">Dashboards</a></li>
           <li><a href="#work">Work</a></li>
           <li><a href="#approach">Approach</a></li>
           <li><a href="#skills">Skills</a></li>
@@ -47,9 +48,9 @@
           <h1>I turn operational data into <em>decisions leaders can act on.</em></h1>
           <p class="lead">Power BI, DAX, SQL and data modelling, from the raw export to the boardroom story. Every report I build answers a business question, compares like with like, and says what the numbers mean.</p>
           <div class="cta-row">
-            <a class="btn btn-primary" href="branch-performance.html">Read the featured case study
+            <a class="btn btn-primary" href="dashboard.html">Open the live dashboards
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-            <a class="btn btn-ghost-dark" href="#work">See all work</a>
+            <a class="btn btn-ghost-dark" href="branch-performance.html">Read the case study</a>
           </div>
           <ul class="hero-facts">
             <li><strong>3+ years</strong>BI and analytics in energy, payments, consulting</li>
@@ -58,7 +59,8 @@
           </ul>
         </div>
 
-        <figure class="preview" aria-label="Sample view of a report page, with synthetic data">
+        <a class="preview-link" href="dashboard.html" aria-label="Open the live Branch Performance dashboard">
+        <figure class="preview">
           <div class="preview-head">
             <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
             <span>Branch Performance · Ranking</span>
@@ -71,53 +73,23 @@
           </div>
           <div class="preview-chart" id="hero-scatter"></div>
           <figcaption class="preview-insight"><span class="insight-tag">Key insight</span>Fewer new merchants, but each one is worth more. Before calling it growth, check which branches depend on one big client.</figcaption>
+          <p class="preview-open">Open the live dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></p>
         </figure>
-      </div>
-    </section>
-
-    <!-- Value -->
-    <section class="section" id="value">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow">What I bring</p>
-          <h2>Insight a business can use, not just dashboards</h2>
-          <p class="lead">Four things I do on every project, whatever the tool.</p>
-        </div>
-        <div class="grid-4">
-          <article class="card">
-            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></div>
-            <h3>Answer the real question</h3>
-            <p>Each report page answers one management question. The title states the answer, and a measure writes the insight sentence, so it stays right after every refresh.</p>
-          </article>
-          <article class="card">
-            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></svg></div>
-            <h3>Make comparisons fair</h3>
-            <p>Same months against same months, rates in percentage points, every group measured on equal terms. No flattering numbers that fall apart in the meeting.</p>
-          </article>
-          <article class="card">
-            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
-            <h3>Find the risk behind the average</h3>
-            <p>Averages hide things. Before I call something growth, I check how much of it depends on one client, one region or one season.</p>
-          </article>
-          <article class="card">
-            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3.9M4 4v4h4M4 13a8 8 0 0 0 14.9 3.9M20 20v-4h-4"/></svg></div>
-            <h3>Automate the repeat work</h3>
-            <p>Pipelines that pick up next month's file on their own, with checks that tie every total back to the source. A monthly update should be a refresh, not a rebuild.</p>
-          </article>
-        </div>
+        </a>
       </div>
     </section>
 
     <!-- Work -->
-    <section class="section section-alt" id="work">
+    <section class="section" id="work">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow">Selected work</p>
-          <h2>Case study and projects</h2>
+          <h2>Dashboards you can explore</h2>
+          <p class="lead">Open any dashboard and use the filters. No sign-in, nothing to install.</p>
         </div>
 
-        <a class="feature" href="branch-performance.html">
-          <div class="feature-art" aria-hidden="true">
+        <article class="feature">
+          <a class="feature-art" href="dashboard.html" tabindex="-1" aria-hidden="true">
             <svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid meet">
               <g fill="none" stroke="#9cc4f2" stroke-opacity=".55" stroke-width="1.6">
                 <path d="M115 120V168"/>
@@ -141,7 +113,7 @@
                 <path d="M96 58l10-8 8 4 12-14 10 4" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </g>
             </svg>
-          </div>
+          </a>
           <div class="feature-body">
             <div class="chips">
               <span class="chip chip-accent">Featured case study</span>
@@ -151,16 +123,14 @@
               <span class="chip">Star schema</span>
             </div>
             <h3>Branch Performance: are new merchants worth more, or just more?</h3>
-            <p>An executive Power BI report on new-merchant acquisition across a national branch network of a payments company. I built it end to end, from the data model to the presenter notes, for a VP and then the global board.</p>
-            <ul class="ticks">
-              <li>Showed that fewer new merchants were bringing more volume, and made value per merchant the measure of quality</li>
-              <li>Found that one new client carried a large part of the year's growth, and flagged it as a risk</li>
-              <li>Added a risk view of sales reps: steady business, or dependence on one big client</li>
-            </ul>
-            <span class="link-arrow">Read the case study
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+            <p>An executive Power BI report on new-merchant acquisition across a national branch network. I built it end to end for a VP and then the global board. The live demo runs the same logic on synthetic data.</p>
+            <p class="feature-try"><b>Try it:</b> 6 report pages, filters for year, region and account manager, and click any bar, dot or row to filter the rest.</p>
+            <div class="cta-row feature-cta">
+              <a class="btn btn-primary" href="dashboard.html">Open the live dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+              <a class="btn btn-outline" href="branch-performance.html">Read the case study</a>
+            </div>
           </div>
-        </a>
+        </article>
 
         <div class="sub-head">
           <h3>More projects</h3>
@@ -209,7 +179,7 @@
               <p class="project-meta">SQL · Tableau · 2023</p>
               <h4>Covid-19: five months of the pandemic</h4>
               <p>Pulled data from four related WHO tables with SQL, then built a Tableau dashboard that tracks the spread over time and by country.</p>
-              <p class="project-foot"><a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyHealthCareTasks/DashTaskHealth" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a></p>
+              <p class="project-foot"><a class="link-arrow" href="dashboard.html#dash=covid">Open the dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
             </div>
           </article>
 
@@ -229,7 +199,7 @@
               <p class="project-meta">Tableau · 2023</p>
               <h4>Business Performance: sales, profit and orders</h4>
               <p>Sales, profit and order patterns across customer segments, product categories and cities, explored with filters and drill-down.</p>
-              <p class="project-foot"><a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyFinalAssignmentAD/DashFinal" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a></p>
+              <p class="project-foot"><a class="link-arrow" href="dashboard.html#dash=business">Open the dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
             </div>
           </article>
 
@@ -252,12 +222,46 @@
               <p class="project-meta">Tableau · 2023</p>
               <h4>Store Performance: sales by location</h4>
               <p>Which stores and ZIP codes sell the most bottles, and each store's share of total sales, on a map and in ranked tables.</p>
-              <p class="project-foot"><a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/Final_dashboard_workearly/Dashboard1" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a></p>
+              <p class="project-foot"><a class="link-arrow" href="dashboard.html#dash=store">Open the dashboard <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></p>
             </div>
           </article>
         </div>
       </div>
     </section>
+
+    <!-- Value -->
+    <section class="section section-alt" id="value">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">What I bring</p>
+          <h2>Insight a business can use, not just dashboards</h2>
+          <p class="lead">Four things I do on every project, whatever the tool.</p>
+        </div>
+        <div class="grid-4">
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg></div>
+            <h3>Answer the real question</h3>
+            <p>Each report page answers one management question. The title states the answer, and a measure writes the insight sentence, so it stays right after every refresh.</p>
+          </article>
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18M7 21h10M5 7h14M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z"/></svg></div>
+            <h3>Make comparisons fair</h3>
+            <p>Same months against same months, rates in percentage points, every group measured on equal terms. No flattering numbers that fall apart in the meeting.</p>
+          </article>
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></div>
+            <h3>Find the risk behind the average</h3>
+            <p>Averages hide things. Before I call something growth, I check how much of it depends on one client, one region or one season.</p>
+          </article>
+          <article class="card">
+            <div class="icon-badge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.9-3.9M4 4v4h4M4 13a8 8 0 0 0 14.9 3.9M20 20v-4h-4"/></svg></div>
+            <h3>Automate the repeat work</h3>
+            <p>Pipelines that pick up next month's file on their own, with checks that tie every total back to the source. A monthly update should be a refresh, not a rebuild.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
 
     <!-- Approach -->
     <section class="section" id="approach">
@@ -427,6 +431,8 @@
   </footer>
 
   <script src="js/site.js"></script>
+  <script src="js/demo-data.js"></script>
+  <script src="js/demo-model.js"></script>
   <script src="js/charts.js"></script>
 </body>
 </html>

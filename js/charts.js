@@ -5,12 +5,30 @@
 
   var NS = "http://www.w3.org/2000/svg";
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"];
-  var DATA = {
-    signLast: [1180, 1220, 1350, 1400, 1460, 1380, 1550, 1100],
-    signThis: [1150, 1230, 1380, 1290, 1310, 1220, 1050, 950],
-    rateLast: [30, 36, 40, 43, 46, 49, 51, 50],
-    rateThis: [23, 29, 34, 38, 41, 45, 48, 48]
-  };
+  // Same synthetic dataset as the live dashboard (js/demo-data.js), so every page agrees
+  var DEMO = window.DemoData ? DemoData.generate() : null;
+  var MODEL = DEMO ? DemoModel.create(DEMO) : null;
+  var DATA = { signLast: [], signThis: [], rateLast: [], rateThis: [] };
+  if (MODEL) {
+    for (var mo = 1; mo <= MODEL.LAST_MONTH_NO; mo++) {
+      DATA.signLast.push(DEMO.merchants.filter(function (x) { return x.y === 2025 && x.m === mo; }).length);
+      DATA.signThis.push(DEMO.merchants.filter(function (x) { return x.y === 2026 && x.m === mo; }).length);
+      DATA.rateLast.push(Math.round(MODEL.tRateMonthly(DEMO.merchants, 2025, [mo]) * 100));
+      DATA.rateThis.push(Math.round(MODEL.tRateMonthly(DEMO.merchants, 2026, [mo]) * 100));
+    }
+  }
+  function niceMax(v) { var p = Math.pow(10, Math.floor(Math.log10(v))); return [1, 2, 2.5, 5, 10].map(function (k) { return k * p; }).filter(function (c) { return c >= v; })[0]; }
+  function nice125(v, up) {
+    var p = Math.pow(10, Math.floor(Math.log10(v))), c = [1, 2, 5, 10].map(function (k) { return k * p; });
+    if (up) { for (var i = 0; i < c.length; i++) if (c[i] >= v) return c[i]; return c[3]; }
+    for (var j = c.length - 1; j >= 0; j--) if (c[j] <= v) return c[j];
+    return c[0];
+  }
+  function ticks125(lo, hi) {
+    var out = [];
+    for (var e = Math.floor(Math.log10(lo)); e <= Math.ceil(Math.log10(hi)); e++) [1, 2, 5].forEach(function (k) { var v = k * Math.pow(10, e); if (v > lo * 1.01 && v < hi / 1.01) out.push(v); });
+    return out;
+  }
   var RISK = {
     good: { cls: "r-good", label: "Spread", long: "Biggest client under 25%" },
     warn: { cls: "r-warn", label: "Watch", long: "Biggest client 25 to 50%" },
@@ -148,11 +166,12 @@
     responsive(plot, function (W) {
       plot.querySelectorAll("svg").forEach(function (s) { s.remove(); });
       var H = 250, m = { t: 22, r: 4, b: 26, l: 38 };
-      var iw = W - m.l - m.r, ih = H - m.t - m.b, max = 1600;
+      var iw = W - m.l - m.r, ih = H - m.t - m.b;
+      var max = niceMax(Math.max.apply(null, DATA.signLast.concat(DATA.signThis)) * 1.05);
       var svg = el("svg", { width: W, height: H, viewBox: "0 0 " + W + " " + H, role: "img",
         "aria-label": "New merchants signed per month, this year against last year, January to August. Synthetic data." }, plot);
       function y(v) { return m.t + ih - (v / max) * ih; }
-      [0, 400, 800, 1200, 1600].forEach(function (t) {
+      [0, 0.2, 0.4, 0.6, 0.8, 1].map(function (k) { return Math.round(k * max); }).forEach(function (t) {
         el("line", { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), class: t === 0 ? "axis-line" : "grid-line" }, svg);
         txt({ x: m.l - 8, y: y(t) + 4, "text-anchor": "end", class: "tick" }, fmtK(t), svg);
       });
@@ -287,7 +306,13 @@
     }
     return out;
   }
-  var BRANCHES = makeBranches();
+  var BRANCHES = MODEL ? (function () {
+    var g = MODEL.groupBy(DEMO.merchants, function (x) { return x.b; });
+    return Object.keys(g).map(function (k) {
+      var st = MODEL.stats(g[k]);
+      return { name: DEMO.branches[+k].name, n: st.n, value: st.annual, share: st.biggest, risk: MODEL.riskOf(st.biggest) };
+    });
+  })() : makeBranches();
 
   function scatter(host, opts) {
     opts = opts || {};
@@ -304,7 +329,9 @@
       var H = mini ? 180 : Math.round(Math.max(320, Math.min(430, W * 0.6)));
       var m = mini ? { t: 8, r: 8, b: 8, l: 8 } : { t: 14, r: 14, b: 44, l: 50 };
       var iw = W - m.l - m.r, ih = H - m.t - m.b;
-      var xd = [6, 600], yd = [14000, 300000];
+      var xs = BRANCHES.map(function (b) { return b.n; }), ys = BRANCHES.map(function (b) { return b.value; });
+      var xd = [nice125(Math.min.apply(null, xs) / 1.15, false), nice125(Math.max.apply(null, xs) * 1.15, true)];
+      var yd = [nice125(Math.min.apply(null, ys) / 1.15, false), nice125(Math.max.apply(null, ys) * 1.15, true)];
       function x(v) { return m.l + (Math.log(v / xd[0]) / Math.log(xd[1] / xd[0])) * iw; }
       function y(v) { return m.t + ih - (Math.log(v / yd[0]) / Math.log(yd[1] / yd[0])) * ih; }
       var svg = el("svg", { width: W, height: H, viewBox: "0 0 " + W + " " + H }, plot);
@@ -314,11 +341,11 @@
         svg.setAttribute("aria-label", "Scatter of branches: new merchants signed against yearly volume per merchant, shaped by how much volume comes from the biggest client. Synthetic data.");
       }
       if (!mini) {
-        [10, 30, 100, 300].forEach(function (t) {
+        ticks125(xd[0], xd[1]).forEach(function (t) {
           el("line", { x1: x(t), x2: x(t), y1: m.t, y2: m.t + ih, class: "grid-line" }, svg);
           txt({ x: x(t), y: m.t + ih + 16, "text-anchor": "middle", class: "tick" }, String(t), svg);
         });
-        [20000, 50000, 100000, 200000].forEach(function (t) {
+        ticks125(yd[0], yd[1]).forEach(function (t) {
           el("line", { x1: m.l, x2: W - m.r, y1: y(t), y2: y(t), class: "grid-line" }, svg);
           txt({ x: m.l - 8, y: y(t) + 4, "text-anchor": "end", class: "tick" }, fmtEur(t), svg);
         });
