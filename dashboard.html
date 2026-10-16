@@ -26,7 +26,7 @@
 
   <header class="nav">
     <div class="wrap nav-in">
-      <a class="brand" href="./" aria-label="Dimitris Athanasaros, home"><span class="mono-badge" aria-hidden="true">DA</span><span class="brand-name">Dimitris Athanasaros</span></a>
+      <a class="brand" href="./" aria-label="Dimitris Athanasaros, home"><img class="avatar" src="images/avatar-96.jpg" alt="" width="34" height="34"><span class="brand-name">Dimitris Athanasaros</span></a>
       <nav aria-label="Main">
         <ul class="nav-links">
           <li><a href="./#work">Work</a></li>
@@ -45,11 +45,10 @@
         <h1>Live dashboards</h1>
         <div class="dash-switch" role="tablist" aria-label="Choose a dashboard">
           <button type="button" role="tab" id="d-bp" data-dash="bp" aria-controls="dash-bp" aria-selected="true"><b>Branch Performance</b><span>Power BI report · demo</span></button>
+          <button type="button" role="tab" id="d-business" data-dash="business" aria-controls="dash-business" aria-selected="false" tabindex="-1"><b>Business Performance</b><span>Retail sales · Excel</span></button>
           <button type="button" role="tab" id="d-covid" data-dash="covid" aria-controls="dash-covid" aria-selected="false" tabindex="-1"><b>Covid-19</b><span>SQL · Tableau</span></button>
-          <button type="button" role="tab" id="d-business" data-dash="business" aria-controls="dash-business" aria-selected="false" tabindex="-1"><b>Business Performance</b><span>Tableau</span></button>
-          <button type="button" role="tab" id="d-store" data-dash="store" aria-controls="dash-store" aria-selected="false" tabindex="-1"><b>Store Performance</b><span>Tableau</span></button>
         </div>
-        <p class="dash-note" id="dash-note"><b>Synthetic data</b>Same rules and measures as the real report</p>
+        <p class="dash-note" id="dash-note"><b>Synthetic data</b><span id="dash-note-text">Read live from an Excel workbook</span></p>
       </div>
     </div>
 
@@ -74,10 +73,12 @@
           <label class="sel">Account manager <select id="f-am"></select></label>
           <span class="fchips" id="f-chips"></span>
           <button type="button" class="reset" id="f-reset">Reset</button>
+          <a class="dl" href="data/Branch_Performance_Synthetic.xlsx" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Excel data</a>
         </div>
       </div>
 
       <div class="canvas">
+        <p class="loading-state" id="bp-loading">Loading the data from Excel…</p>
         <!-- Overview -->
         <div class="page" data-page="overview">
           <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
@@ -208,6 +209,72 @@
       </div>
     </section>
 
+    <!-- Business Performance, rebuilt as a live dashboard on an Excel dataset -->
+    <section class="report" id="dash-business" role="tabpanel" aria-labelledby="d-business" hidden>
+      <div class="report-bar">
+        <div class="page-tabs" role="tablist" aria-label="Business report pages">
+          <button type="button" role="tab" data-bpage="overview" aria-selected="true">Overview</button>
+          <button type="button" role="tab" data-bpage="profit" aria-selected="false" tabindex="-1">Profitability</button>
+        </div>
+        <div class="filters" role="group" aria-label="Business filters">
+          <div class="seg" role="group" aria-label="Order year" id="b-year"></div>
+          <label class="sel">Segment <select id="b-seg"></select></label>
+          <label class="sel">Category <select id="b-cat"></select></label>
+          <label class="sel">Region <select id="b-reg"></select></label>
+          <span class="fchips" id="b-chips"></span>
+          <button type="button" class="reset" id="b-reset">Reset</button>
+          <a class="dl" href="data/Business_Performance_Synthetic.xlsx" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Excel data</a>
+        </div>
+      </div>
+      <div class="canvas">
+        <p class="loading-state" id="biz-loading">Loading the data from Excel…</p>
+        <div class="page" data-page="b-overview">
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="kpis" data-kpis></div>
+          <div class="grid">
+            <div class="viz c-8">
+              <div class="viz-head"><div><p class="viz-title" id="bz-trend-title">Monthly sales</p><p class="viz-sub">Sales after discount, this year against last year</p></div></div>
+              <div class="viz-body" id="bz-trend"></div>
+            </div>
+            <div class="viz c-4">
+              <div class="viz-head"><div><p class="viz-title">Sales and margin by category</p><p class="viz-sub">Click a category to filter</p></div></div>
+              <div class="viz-body" id="bz-cat"></div>
+            </div>
+            <div class="viz c-7">
+              <div class="viz-head"><div><p class="viz-title">Sales by city</p><p class="viz-sub">Click a city to filter</p></div></div>
+              <div class="viz-body" id="bz-city"></div>
+            </div>
+            <div class="viz c-5">
+              <div class="viz-head"><div><p class="viz-title">Sales and margin by customer segment</p><p class="viz-sub">Click a segment to filter</p></div></div>
+              <div class="viz-body" id="bz-seg"></div>
+            </div>
+          </div>
+        </div>
+        <div class="page" data-page="b-profit" hidden>
+          <p class="insight-strip"><span class="insight-tag">Key insight</span><span data-insight></span></p>
+          <div class="kpis" data-kpis></div>
+          <div class="grid">
+            <div class="viz c-5 r-2 tall">
+              <div class="viz-head"><div><p class="viz-title">Profit by sub-category</p><p class="viz-sub">Red loses money · click a bar to filter</p></div></div>
+              <div class="viz-body" id="bz-sub"></div>
+            </div>
+            <div class="viz c-7">
+              <div class="viz-head"><div><p class="viz-title">Profit margin by discount</p><p class="viz-sub">Each order line grouped by its discount rate</p></div></div>
+              <div class="viz-body" id="bz-disc"></div>
+            </div>
+            <div class="viz c-4">
+              <div class="viz-head"><div><p class="viz-title">Discount against margin</p><p class="viz-sub">One dot per sub-category · size: sales</p></div></div>
+              <div class="viz-body" id="bz-scatter"></div>
+            </div>
+            <div class="viz c-3">
+              <div class="viz-head"><div><p class="viz-title">Margin by region and category</p><p class="viz-sub">Blue profitable · red loss-making</p></div></div>
+              <div class="table-wrap" id="bz-heat"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Tableau dashboards (loaded only when opened) -->
     <section class="embed" id="dash-covid" role="tabpanel" aria-labelledby="d-covid" hidden data-embed="WorkEarlyHealthCareTasks/DashTaskHealth">
       <div class="embed-head">
@@ -219,29 +286,10 @@
       </div>
       <div class="embed-frame"><p class="loading">Loading the Tableau dashboard…</p></div>
     </section>
-    <section class="embed" id="dash-business" role="tabpanel" aria-labelledby="d-business" hidden data-embed="WorkEarlyFinalAssignmentAD/DashFinal">
-      <div class="embed-head">
-        <div>
-          <h2>Business Performance: sales, profit and orders</h2>
-          <p>Sales, profit and orders across customer segments, product categories, ship modes and cities. Click a legend item or a mark to highlight it across the dashboard.</p>
-        </div>
-        <a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/WorkEarlyFinalAssignmentAD/DashFinal" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a>
-      </div>
-      <div class="embed-frame"><p class="loading">Loading the Tableau dashboard…</p></div>
-    </section>
-    <section class="embed" id="dash-store" role="tabpanel" aria-labelledby="d-store" hidden data-embed="Final_dashboard_workearly/Dashboard1">
-      <div class="embed-head">
-        <div>
-          <h2>Store Performance: sales by location</h2>
-          <p>Bottle sales by store and ZIP code on a map, with each store's share of total sales in ranked tables. Hover the map and the tables for details.</p>
-        </div>
-        <a class="link-arrow" href="https://public.tableau.com/app/profile/dimitris.athanasaros/viz/Final_dashboard_workearly/Dashboard1" target="_blank" rel="noopener">Open in Tableau Public<span class="sr-only"> (opens in a new tab)</span></a>
-      </div>
-      <div class="embed-frame"><p class="loading">Loading the Tableau dashboard…</p></div>
-    </section>
   </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.6.0/echarts.min.js"></script>
+  <script src="js/xlsx-lite.js"></script>
   <script src="js/demo-data.js"></script>
   <script src="js/demo-model.js"></script>
   <script src="js/dashboard.js"></script>

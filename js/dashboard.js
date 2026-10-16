@@ -11,12 +11,11 @@
     return;
   }
 
-  var data = DemoData.generate();
-  var md = DemoModel.create(data);
-  var B = data.branches, R = data.reps, MON = data.months, LM = md.LAST_MONTH_NO;
+  // Branch Performance data is read from the Excel workbook (the generator is only a fallback)
+  var data = null, md = null, B = [], R = [], MON = DemoData.MONTHS, LM = DemoModel.LAST_MONTH_NO;
   var MN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var PAGES = ["overview", "growth", "activation", "ranking", "products", "reps"];
-  var DASHES = ["bp", "covid", "business", "store"];
+  var DASHES = ["bp", "business", "covid"];
   var RISK = {
     good: { label: "Spread", long: "biggest client under 25%", symbol: "circle" },
     warn: { label: "Watch", long: "biggest client 25 to 50%", symbol: "diamond" },
@@ -36,7 +35,11 @@
     if (a >= 1e3) return "€" + (n / 1e3).toFixed(1) + "K";
     return "€" + Math.round(n);
   }
-  function fPct(x, d) { return x == null || !isFinite(x) ? "–" : (x * 100).toFixed(d == null ? 1 : d) + "%"; }
+  function fPct(x, d) {
+    if (x == null || !isFinite(x)) return "–";
+    var t = Math.abs(x * 100).toFixed(d == null ? 1 : d);
+    return (x < 0 && +t !== 0 ? "−" : "") + t + "%";
+  }
   function sign(v) { return v > 0 ? "+" : v < 0 ? "−" : ""; }
   function fChg(x, d) { if (x == null || !isFinite(x)) return "–"; var v = x * 100; return sign(v) + Math.abs(v).toFixed(d == null ? 1 : d) + "%"; }
   function fPP(x) { if (x == null || !isFinite(x)) return "–"; var v = x * 100; return sign(v) + Math.abs(v).toFixed(1) + " pp"; }
@@ -54,7 +57,8 @@
     function g(n) { return cs.getPropertyValue(n).trim(); }
     return { ink: g("--ink"), ink2: g("--ink-2"), muted: g("--muted"), line: g("--line"), axis: g("--axis"), surface: g("--surface"),
       s2: g("--surface-2"), cThis: g("--s-this"), cLast: g("--s-last"), good: g("--good"), warn: g("--warn"), crit: g("--crit"),
-      link: g("--link"), font: "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" };
+      link: g("--link"), c3: g("--s-3"), dmid: g("--div-mid"), dneg: g("--div-neg"), dpos: g("--div-pos"),
+      font: "Inter, system-ui, -apple-system, 'Segoe UI', sans-serif" };
   }
   function riskColor(k) { return k === "crit" ? T.crit : k === "warn" ? T.warn : T.good; }
 
@@ -134,7 +138,7 @@
     items.forEach(function (k) {
       var d = document.createElement("div");
       d.className = "kpi-card";
-      [["lbl", k.lbl], ["val" + (k.cls ? " " + k.cls : ""), k.val], ["sub", k.sub || ""]].forEach(function (p2) {
+      [["lbl", k.lbl], ["val" + (k.cls ? " " + k.cls : ""), k.val], ["sub" + (k.subCls ? " " + k.subCls : ""), k.sub || ""]].forEach(function (p2) {
         var s = document.createElement("span");
         s.className = p2[0];
         s.textContent = p2[1];
@@ -214,7 +218,12 @@
     var g = md.groupBy(ms, keyFn);
     return Object.keys(g).map(function (k) { var s = md.stats(g[k]); s.key = k; s.risk = md.riskOf(s.biggest); return s; });
   }
-  function giantIn(ms) { for (var i = 0; i < ms.length; i++) if (ms[i].giant) return ms[i]; return null; }
+  // the biggest 2026 client in the selection, if it carries 5% or more of the 2026 volume
+  function giantIn(ms) {
+    var best = null, tot = 0;
+    ms.forEach(function (x) { if (x.y !== 2026) return; tot += x.tot; if (!best || x.tot > best.tot) best = x; });
+    return best && tot && best.tot / tot >= 0.05 ? best : null;
+  }
 
   /* ---------- pages ---------- */
   var render$ = {};
@@ -687,8 +696,11 @@
     var o = document.createElement("option"); o.value = ""; o.textContent = allLabel; select.appendChild(o);
     values.forEach(function (v) { var x = document.createElement("option"); x.value = v; x.textContent = v; select.appendChild(x); });
   }
-  options(elRegion, data.regions, "All");
-  options(elAm, data.ams, "All");
+  function fillBPOptions() {
+    elRegion.replaceChildren(); elAm.replaceChildren();
+    options(elRegion, data.regions, "All");
+    options(elAm, data.ams, "All");
+  }
   elRegion.addEventListener("change", function () {
     state.region = elRegion.value;
     if (state.branch != null && state.region && B[state.branch].region !== state.region) state.branch = null;
@@ -758,7 +770,7 @@
       });
     });
   }
-  var pageBtns = Array.prototype.slice.call(document.querySelectorAll(".page-tabs [role=tab]"));
+  var pageBtns = Array.prototype.slice.call(document.querySelectorAll("#dash-bp .page-tabs [role=tab]"));
   pageBtns.forEach(function (b) { b.addEventListener("click", function () { state.page = b.dataset.page; render(); }); });
   tabKeys(pageBtns, function (b) { state.page = b.dataset.page; render(); });
   var dashBtns = Array.prototype.slice.call(document.querySelectorAll(".dash-switch [role=tab]"));
@@ -777,20 +789,350 @@
     frame.appendChild(f);
   }
 
+  /* ======================= Business Performance (rebuilt) ======================= */
+  var biz = { rows: null, loading: false, error: null, years: [], segments: [], categories: [], regions: [], cities: [], subs: [] };
+  var bs = { page: "overview", year: 0, seg: "", cat: "", reg: "", city: null, sub: null };
+  var BANDS = ["No discount", "1–10%", "11–20%", "21–30%", "Over 30%"];
+  function bandOf(d) { return d <= 0 ? 0 : d <= 0.1 ? 1 : d <= 0.2 ? 2 : d <= 0.3 ? 3 : 4; }
+  function fUsd(n) {
+    var a = Math.abs(n), s = n < 0 ? "−" : "";
+    if (a >= 1e6) return s + "$" + (a / 1e6).toFixed(2) + "M";
+    if (a >= 1e4) return s + "$" + Math.round(a / 1e3) + "K";
+    if (a >= 1e3) return s + "$" + (a / 1e3).toFixed(1) + "K";
+    return s + "$" + Math.round(a);
+  }
+  function axisUsd(v) { return v === 0 ? "0" : fUsd(v); }
+  function uniqSorted(rows, k, num) {
+    var seen = {}, out = [];
+    rows.forEach(function (r) { if (!seen[r[k]]) { seen[r[k]] = 1; out.push(r[k]); } });
+    return out.sort(num ? function (a, b) { return a - b; } : undefined);
+  }
+  function listNames(arr) { return arr.length < 2 ? arr.join("") : arr.slice(0, -1).join(", ") + " and " + arr[arr.length - 1]; }
+
+  function loadBiz() {
+    if (biz.loading || biz.rows) return;
+    biz.loading = true;
+    XlsxLite.read("data/Business_Performance_Synthetic.xlsx", { sheets: ["Orders"], dates: ["Order date", "Ship date"] }).then(function (wb) {
+      biz.rows = wb.Orders.filter(function (r) { return r["Order date"] instanceof Date; }).map(function (r) {
+        var od = r["Order date"], disc = +r.Discount || 0;
+        return { oid: r["Order ID"], y: od.getUTCFullYear(), m: od.getUTCMonth() + 1, ship: r["Ship mode"], seg: r.Segment, city: r.City,
+          reg: r.Region, cat: r.Category, sub: r["Sub-category"], sales: +r["Sales (USD)"] || 0, disc: disc, band: bandOf(disc), profit: +r["Profit (USD)"] || 0 };
+      });
+      biz.years = uniqSorted(biz.rows, "y", true);
+      biz.segments = uniqSorted(biz.rows, "seg");
+      biz.categories = uniqSorted(biz.rows, "cat");
+      biz.regions = uniqSorted(biz.rows, "reg");
+      biz.cities = uniqSorted(biz.rows, "city");
+      biz.subs = uniqSorted(biz.rows, "sub");
+      if (biz.years.indexOf(bs.year) < 0) bs.year = biz.years[biz.years.length - 1];
+      if (biz.segments.indexOf(bs.seg) < 0) bs.seg = "";
+      if (biz.categories.indexOf(bs.cat) < 0) bs.cat = "";
+      if (biz.regions.indexOf(bs.reg) < 0) bs.reg = "";
+      if (bs.city && biz.cities.indexOf(bs.city) < 0) bs.city = null;
+      if (bs.sub && biz.subs.indexOf(bs.sub) < 0) bs.sub = null;
+      fillBizFilters();
+      render();
+    }).catch(function (e) { biz.error = e.message; render(); });
+  }
+
+  function bFilter(o) {
+    o = o || {};
+    var y = o.year || bs.year;
+    return biz.rows.filter(function (r) {
+      if (r.y !== y) return false;
+      if (bs.seg && !o.noSeg && r.seg !== bs.seg) return false;
+      if (bs.cat && !o.noCat && r.cat !== bs.cat) return false;
+      if (bs.reg && !o.noReg && r.reg !== bs.reg) return false;
+      if (bs.city && !o.noCity && r.city !== bs.city) return false;
+      if (bs.sub && !o.noSub && r.sub !== bs.sub) return false;
+      return true;
+    });
+  }
+  function bAgg(rows) {
+    var s = { sales: 0, profit: 0, lines: rows.length, disc: 0, orders: 0 }, o = {};
+    rows.forEach(function (r) { s.sales += r.sales; s.profit += r.profit; s.disc += r.disc; o[r.oid] = 1; });
+    s.orders = Object.keys(o).length;
+    s.margin = s.sales ? s.profit / s.sales : null;
+    s.avgDisc = s.lines ? s.disc / s.lines : null;
+    return s;
+  }
+  function bGroup(rows, k) {
+    var g = {};
+    rows.forEach(function (r) { (g[r[k]] = g[r[k]] || []).push(r); });
+    return Object.keys(g).map(function (key) { var a = bAgg(g[key]); a.key = key; return a; });
+  }
+  function bToggle(key, v) { bs[key] = bs[key] === v ? (key === "city" || key === "sub" ? null : "") : v; render(); }
+  function hbarOpt(list, fmtLabel, isOn, tip, rightPad) {
+    return baseOpt({
+      grid: { left: 14, right: rightPad || 96, top: 4, bottom: 2, containLabel: true },
+      tooltip: Object.assign(baseOpt().tooltip, { trigger: "item", formatter: function (p) { return tip(list[p.dataIndex]); } }),
+      xAxis: valAxis(null, { show: false, max: function (v) { return v.max * 1.05; } }),
+      yAxis: catAxis(list.map(function (r) { return r.key; }), { inverse: true, axisLine: { show: false }, axisLabel: { color: T.ink2, fontSize: 11, fontFamily: T.font } }),
+      series: [{ type: "bar", barMaxWidth: 18, cursor: "pointer", data: list.map(function (r) {
+        return { value: r.sales, itemStyle: { color: T.cThis, borderRadius: [0, 4, 4, 0], opacity: isOn(r) === false ? 0.3 : 1 } };
+      }), label: { show: true, position: "right", color: T.ink2, fontSize: 11, formatter: function (p) { return fmtLabel(list[p.dataIndex]); } } }]
+    });
+  }
+  function tipSales(r) {
+    return ttHead(r.key) + ttRow(T.cThis, fUsd(r.sales), "sales") + ttRow("", fUsd(r.profit), "profit") + ttRow("", fPct(r.margin), "margin") + ttRow("", fInt(r.orders), "orders");
+  }
+
+  var bRender = {};
+  bRender.overview = function () {
+    var Y = bs.year, PY = Y - 1, hasPY = biz.years.indexOf(PY) >= 0;
+    var rowsC = bFilter(), rowsP = hasPY ? bFilter({ year: PY }) : [];
+    var cur = bAgg(rowsC), prev = hasPY ? bAgg(rowsP) : null;
+    function delta(a, b, pp, lowerIsGood) {
+      if (!prev) return { sub: "first year in the data", cls: "" };
+      var d = pp ? b - a : chg(a, b), c = dir(d);
+      if (lowerIsGood && c) c = c === "up" ? "down" : "up";
+      return { sub: (pp ? fPP(d) : fChg(d)) + " vs " + PY, cls: c };
+    }
+    var dS = delta(prev && prev.sales, cur.sales), dP = delta(prev && prev.profit, cur.profit), dM = delta(prev && prev.margin, cur.margin, true),
+      dO = delta(prev && prev.orders, cur.orders), dD = delta(prev && prev.avgDisc, cur.avgDisc, true, true);
+    setKpis("b-overview", [
+      { lbl: "Sales", val: fUsd(cur.sales), sub: dS.sub, subCls: dS.cls },
+      { lbl: "Profit", val: fUsd(cur.profit), sub: dP.sub, subCls: dP.cls },
+      { lbl: "Profit margin", val: fPct(cur.margin), sub: dM.sub, subCls: dM.cls },
+      { lbl: "Orders", val: fInt(cur.orders), sub: dO.sub, subCls: dO.cls },
+      { lbl: "Average discount", val: fPct(cur.avgDisc), sub: dD.sub, subCls: dD.cls }
+    ]);
+    var cats = bGroup(bFilter({ noCat: true }), "cat").sort(function (a, b) { return b.sales - a.sales; });
+    var cityRows = bFilter({ noCity: true });
+    var cities = bGroup(cityRows, "city").sort(function (a, b) { return b.sales - a.sales; }).slice(0, 10);
+    var segs = bGroup(bFilter({ noSeg: true }), "seg").sort(function (a, b) { return b.sales - a.sales; });
+    var text;
+    if (!cur.lines) text = "No orders for this selection.";
+    else {
+      text = Y + ": sales " + fUsd(cur.sales) + (prev ? " (" + fChg(chg(prev.sales, cur.sales), 0) + " vs " + PY + ")" : "") + ", profit " + fUsd(cur.profit) +
+        (prev ? " (" + fChg(chg(prev.profit, cur.profit), 0) + ")" : "") + ", margin " + fPct(cur.margin) + ".";
+      if (prev && cur.margin < prev.margin - 0.003 && cur.avgDisc > prev.avgDisc + 0.002) text += " The margin fell as the average discount rose to " + fPct(cur.avgDisc) + ".";
+      else if (prev && cur.margin > prev.margin + 0.003) text += " The margin improved by " + fPP(cur.margin - prev.margin) + ".";
+      var thin = cats.slice().sort(function (a, b) { return a.margin - b.margin; })[0];
+      if (cats.length > 1 && !bs.cat) text += " " + thin.key + " has the thinnest margin (" + fPct(thin.margin) + ").";
+      if (cities.length > 1 && !bs.city) text += " " + cities[0].key + " is the biggest city (" + fPct(cities[0].sales / bAgg(cityRows).sales, 0) + " of sales).";
+    }
+    setInsight("b-overview", text);
+
+    document.getElementById("bz-trend-title").textContent = hasPY ? "Monthly sales, " + Y + " against " + PY : "Monthly sales, " + Y;
+    var cy = [], py = [], cyP = [];
+    for (var m = 1; m <= 12; m++) {
+      cy.push(sum(rowsC, function (r) { return r.m === m ? r.sales : 0; }));
+      cyP.push(sum(rowsC, function (r) { return r.m === m ? r.profit : 0; }));
+      py.push(sum(rowsP, function (r) { return r.m === m ? r.sales : 0; }));
+    }
+    var series = [bar(String(Y), cy, T.cThis)];
+    if (hasPY) series.unshift(bar(String(PY), py, T.cLast));
+    mount("bz-trend", cur.lines ? baseOpt({
+      legend: legend(hasPY ? [String(PY), String(Y)] : [String(Y)]),
+      tooltip: Object.assign(baseOpt().tooltip, { trigger: "axis", axisPointer: { type: "shadow", shadowStyle: { color: "rgba(127,127,127,.08)" } },
+        formatter: function (ps) {
+          var i = ps[0].dataIndex, h = ttHead(MN[i] + " " + Y) + ttRow(T.cThis, fUsd(cy[i]), "sales " + Y);
+          if (hasPY) h += ttRow(T.cLast, fUsd(py[i]), "sales " + PY) + ttRow("", fChg(chg(py[i], cy[i])), "change");
+          return h + ttRow("", fUsd(cyP[i]), "profit " + Y);
+        } }),
+      xAxis: catAxis(MN), yAxis: valAxis(axisUsd), series: series
+    }) : emptyOpt());
+    mount("bz-cat", cats.length ? hbarOpt(cats, function (r) { return fUsd(r.sales) + " · " + fPct(r.margin, 0); },
+      function (r) { return bs.cat ? r.key === bs.cat : null; }, tipSales) : emptyOpt(), function (p) { bToggle("cat", cats[p.dataIndex].key); });
+    mount("bz-city", cities.length ? hbarOpt(cities, function (r) { return fUsd(r.sales); },
+      function (r) { return bs.city ? r.key === bs.city : null; }, tipSales, 60) : emptyOpt(), function (p) { bToggle("city", cities[p.dataIndex].key); });
+    mount("bz-seg", segs.length ? hbarOpt(segs, function (r) { return fUsd(r.sales) + " · " + fPct(r.margin, 0); },
+      function (r) { return bs.seg ? r.key === bs.seg : null; }, tipSales) : emptyOpt(), function (p) { bToggle("seg", segs[p.dataIndex].key); });
+  };
+
+  bRender.profit = function () {
+    var Y = bs.year, rows = bFilter();
+    var subs = bGroup(bFilter({ noSub: true }), "sub").sort(function (x, y) { return x.profit - y.profit; });
+    var losing = subs.filter(function (s) { return s.profit < 0; });
+    var lossLines = rows.filter(function (r) { return r.profit < 0; });
+    var lost = sum(lossLines, function (r) { return r.profit; });
+    var none = bAgg(rows.filter(function (r) { return r.band === 0; })), deep = bAgg(rows.filter(function (r) { return r.disc > 0.2; }));
+    setKpis("b-profit", [
+      { lbl: "Sub-categories losing money", val: losing.length + " of " + subs.length, sub: losing.length ? listNames(losing.slice(0, 3).map(function (s) { return s.key; })) : "none in this selection" },
+      { lbl: "Order lines sold at a loss", val: fPct(rows.length ? lossLines.length / rows.length : null), sub: fInt(lossLines.length) + " of " + fInt(rows.length) + " lines" },
+      { lbl: "Profit lost on those lines", val: fUsd(lost), sub: "sum of negative profit", subCls: lost < 0 ? "down" : "" },
+      { lbl: "Margin with no discount", val: fPct(none.margin), sub: deep.lines ? "vs " + fPct(deep.margin) + " above 20% off" : "no lines above 20% off", subCls: deep.margin < 0 ? "down" : "" }
+    ]);
+    var regs = bGroup(bFilter({ noReg: true }), "reg").sort(function (x, y) { return y.avgDisc - x.avgDisc; });
+    var text = !rows.length ? "No orders for this selection." :
+      (losing.length ? losing.length + " of " + subs.length + " sub-categories lose money in " + Y + ": " + listNames(losing.map(function (s) { return s.key; })) + ". " : "Every sub-category makes money in this selection. ") +
+      (deep.lines && none.lines ? "Lines discounted more than 20% run at a margin of " + fPct(deep.margin, 0) + ", against " + fPct(none.margin, 0) + " with no discount." : "");
+    if (rows.length && regs.length > 1 && !bs.reg) text += " " + regs[0].key + " discounts the most (average " + fPct(regs[0].avgDisc, 0) + ") and has a margin of " + fPct(regs[0].margin, 0) + ".";
+    setInsight("b-profit", text);
+
+    mount("bz-sub", subs.length ? baseOpt({
+      grid: { left: 14, right: 64, top: 4, bottom: 2, containLabel: true },
+      tooltip: Object.assign(baseOpt().tooltip, { trigger: "item", formatter: function (p) { var r = subs[p.dataIndex]; return ttHead(r.key) + ttRow(p.color, fUsd(r.profit), "profit") + ttRow("", fUsd(r.sales), "sales") + ttRow("", fPct(r.margin), "margin") + ttRow("", fPct(r.avgDisc), "average discount"); } }),
+      xAxis: valAxis(axisUsd),
+      yAxis: catAxis(subs.map(function (r) { return r.key; }), { inverse: true, axisLine: { show: false }, axisLabel: { color: T.ink2, fontSize: 11, fontFamily: T.font } }),
+      series: [{ type: "bar", barMaxWidth: 16, cursor: "pointer", data: subs.map(function (r) {
+        return { value: r.profit, itemStyle: { color: r.profit < 0 ? T.dneg : T.dpos, borderRadius: r.profit < 0 ? [4, 0, 0, 4] : [0, 4, 4, 0], opacity: bs.sub && bs.sub !== r.key ? 0.3 : 1 } };
+      }), label: { show: true, position: "right", color: T.ink2, fontSize: 10, formatter: function (p) { return p.value < 0 ? "" : fUsd(p.value); } },
+      markLine: { symbol: "none", silent: true, label: { show: false }, lineStyle: { color: T.axis, type: "solid", width: 1 }, data: [{ xAxis: 0 }] } }]
+    }) : emptyOpt(), function (p) { bToggle("sub", subs[p.dataIndex].key); });
+
+    var bands = BANDS.map(function (name, i) { var x = bAgg(rows.filter(function (r) { return r.band === i; })); x.key = name; return x; });
+    mount("bz-disc", rows.length ? baseOpt({
+      grid: { left: 4, right: 16, top: 24, bottom: 2, containLabel: true },
+      tooltip: Object.assign(baseOpt().tooltip, { trigger: "item", formatter: function (p) { var r = bands[p.dataIndex]; return ttHead(r.key) + ttRow(p.color, fPct(r.margin), "margin") + ttRow("", fUsd(r.profit), "profit") + ttRow("", fUsd(r.sales), "sales") + ttRow("", fInt(r.lines), "order lines"); } }),
+      xAxis: catAxis(BANDS), yAxis: valAxis(axisPct),
+      series: [{ type: "bar", barMaxWidth: 48, data: bands.map(function (r) {
+        return { value: r.margin, itemStyle: { color: r.margin < 0 ? T.dneg : T.dpos, borderRadius: r.margin < 0 ? [0, 0, 4, 4] : [4, 4, 0, 0] } };
+      }), label: { show: true, position: "top", color: T.ink2, fontSize: 11, formatter: function (p) { return p.value == null ? "" : fPct(p.value, 0); } },
+      markLine: { symbol: "none", silent: true, label: { show: false }, lineStyle: { color: T.axis, type: "solid", width: 1 }, data: [{ yAxis: 0 }] } }]
+    }) : emptyOpt());
+
+    var colors = {}, palette = [T.cThis, T.cLast, T.c3], catOf = {};
+    biz.categories.forEach(function (c, i) { colors[c] = palette[i % 3]; });
+    biz.rows.forEach(function (r) { catOf[r.sub] = r.cat; });
+    var maxS = Math.max.apply(null, subs.map(function (s) { return s.sales; }).concat([1]));
+    mount("bz-scatter", subs.length ? baseOpt({
+      legend: { top: 0, left: 0, itemWidth: 10, itemHeight: 10, itemGap: 10, itemStyle: { borderWidth: 0 }, textStyle: { color: T.ink2, fontSize: 11, fontFamily: T.font } },
+      grid: { left: 4, right: 14, top: narrow("bz-scatter") ? 46 : 30, bottom: 20, containLabel: true },
+      tooltip: Object.assign(baseOpt().tooltip, { trigger: "item", formatter: function (p) { var r = p.data.row; return ttHead(r.key + " · " + catOf[r.key]) + ttRow(p.color, fPct(r.margin), "margin") + ttRow("", fPct(r.avgDisc), "average discount") + ttRow("", fUsd(r.sales), "sales"); } }),
+      xAxis: valAxis(axisPct, { name: "Average discount", nameLocation: "middle", nameGap: 22, nameTextStyle: { color: T.muted, fontSize: 11 } }),
+      yAxis: valAxis(axisPct),
+      series: biz.categories.map(function (c, i) {
+        var s = { name: c, type: "scatter", cursor: "pointer", itemStyle: { color: colors[c], borderColor: T.surface, borderWidth: 1.5 },
+          data: subs.filter(function (x) { return catOf[x.key] === c; }).map(function (x) {
+            return { value: [x.avgDisc, x.margin], row: x, symbolSize: 8 + 22 * Math.sqrt(x.sales / maxS), itemStyle: { opacity: bs.sub && bs.sub !== x.key ? 0.25 : 0.92 } };
+          }),
+          label: { show: true, position: "right", color: T.ink2, fontSize: 10, formatter: function (p) { return p.data.row.margin < 0 ? p.data.row.key : ""; } },
+          labelLayout: { hideOverlap: true } };
+        if (i === 0) s.markLine = { symbol: "none", silent: true, label: { show: true, formatter: "break-even", color: T.muted, fontSize: 10, position: "insideEndTop" }, lineStyle: { color: T.axis, type: "solid", width: 1 }, data: [{ yAxis: 0 }] };
+        return s;
+      })
+    }) : emptyOpt(), function (p) { if (p.data && p.data.row) bToggle("sub", p.data.row.key); });
+
+    // region x category heatmap as a table, so the values stay readable
+    var heatRows = bFilter({ noReg: true, noCat: true }), maxAbs = 0.01, grid = {};
+    biz.regions.forEach(function (rg) {
+      grid[rg] = {};
+      biz.categories.forEach(function (c) {
+        var x = bAgg(heatRows.filter(function (r) { return r.reg === rg && r.cat === c; }));
+        grid[rg][c] = x;
+        if (x.margin != null) maxAbs = Math.max(maxAbs, Math.abs(x.margin));
+      });
+    });
+    var host = document.getElementById("bz-heat"), t = document.createElement("table");
+    t.className = "dt heat";
+    var hr = t.createTHead().insertRow();
+    ["Region"].concat(biz.categories.map(function (c) { return c.replace("Office Supplies", "Office"); })).forEach(function (h) { var th = document.createElement("th"); th.textContent = h; hr.appendChild(th); });
+    var tb = t.createTBody();
+    biz.regions.forEach(function (rg) {
+      var tr = tb.insertRow();
+      tr.insertCell().textContent = rg;
+      biz.categories.forEach(function (c) {
+        var x = grid[rg][c], td = tr.insertCell();
+        td.textContent = x.margin == null ? "–" : fPct(x.margin, 0);
+        if (x.margin != null) {
+          var k = Math.min(1, Math.abs(x.margin) / maxAbs), bg = mixHex(T.dmid, x.margin < 0 ? T.dneg : T.dpos, 0.15 + 0.85 * k);
+          td.style.background = bg;
+          td.style.color = luminance(bg) < 0.4 ? "#fff" : "#0b0b0b";
+          td.title = rg + " · " + c + ": sales " + fUsd(x.sales) + ", profit " + fUsd(x.profit);
+        }
+        if ((bs.reg && bs.reg !== rg) || (bs.cat && bs.cat !== c)) td.style.opacity = "0.35";
+      });
+    });
+    host.replaceChildren(t);
+  };
+  function hexRgb(h) {
+    if (h.indexOf("rgb") === 0) return h.match(/\d+/g).slice(0, 3).map(Number);
+    h = h.replace("#", "");
+    if (h.length === 3) h = h.split("").map(function (c) { return c + c; }).join("");
+    return [0, 2, 4].map(function (i) { return parseInt(h.substr(i, 2), 16); });
+  }
+  function mixHex(a, b, t) { var p = hexRgb(a), q = hexRgb(b); return "rgb(" + p.map(function (v, i) { return Math.round(v + (q[i] - v) * t); }).join(",") + ")"; }
+  function luminance(c) {
+    var v = hexRgb(c).map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); });
+    return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2];
+  }
+
+  // business filter bar
+  var bSeg = document.getElementById("b-seg"), bCat = document.getElementById("b-cat"), bReg = document.getElementById("b-reg");
+  function fillBizFilters() {
+    [[bSeg, biz.segments], [bCat, biz.categories], [bReg, biz.regions]].forEach(function (p) { p[0].replaceChildren(); options(p[0], p[1], "All"); });
+    var yb = document.getElementById("b-year");
+    yb.replaceChildren();
+    biz.years.forEach(function (y) {
+      var b = document.createElement("button");
+      b.type = "button"; b.textContent = y; b.dataset.year = y;
+      b.addEventListener("click", function () { bs.year = y; render(); });
+      yb.appendChild(b);
+    });
+  }
+  bSeg.addEventListener("change", function () { bs.seg = bSeg.value; render(); });
+  bCat.addEventListener("change", function () { bs.cat = bCat.value; render(); });
+  bReg.addEventListener("change", function () {
+    bs.reg = bReg.value;
+    if (bs.city && bs.reg && !biz.rows.some(function (r) { return r.city === bs.city && r.reg === bs.reg; })) bs.city = null;
+    render();
+  });
+  document.getElementById("b-reset").addEventListener("click", function () {
+    bs.seg = ""; bs.cat = ""; bs.reg = ""; bs.city = null; bs.sub = null; bs.year = biz.years[biz.years.length - 1]; render();
+  });
+  function syncBizFilters() {
+    document.querySelectorAll("#b-year button").forEach(function (b) { b.setAttribute("aria-pressed", String(+b.dataset.year === bs.year)); });
+    bSeg.value = bs.seg; bCat.value = bs.cat; bReg.value = bs.reg;
+    var chips = document.getElementById("b-chips");
+    chips.replaceChildren();
+    if (bs.city) chips.appendChild(chip(bs.city, function () { bs.city = null; render(); }));
+    if (bs.sub) chips.appendChild(chip(bs.sub, function () { bs.sub = null; render(); }));
+    document.getElementById("b-reset").disabled = !(bs.seg || bs.cat || bs.reg || bs.city || bs.sub || bs.year !== biz.years[biz.years.length - 1]);
+  }
+  var bPageBtns = Array.prototype.slice.call(document.querySelectorAll("#dash-business .page-tabs [role=tab]"));
+  bPageBtns.forEach(function (b) { b.addEventListener("click", function () { bs.page = b.dataset.bpage; render(); }); });
+  tabKeys(bPageBtns, function (b) { bs.page = b.dataset.bpage; render(); });
+  function renderBiz() {
+    var loading = document.getElementById("biz-loading");
+    if (!biz.rows) {
+      loading.hidden = false;
+      loading.textContent = biz.error ? "Could not load the Excel data (" + biz.error + "). Please refresh the page." : "Loading the data from Excel…";
+      if (!biz.error) loadBiz();
+      return;
+    }
+    loading.hidden = true;
+    bPageBtns.forEach(function (b) { var on = b.dataset.bpage === bs.page; b.setAttribute("aria-selected", String(on)); b.tabIndex = on ? 0 : -1; });
+    document.querySelectorAll("#dash-business .page").forEach(function (p) { p.hidden = p.dataset.page !== "b-" + bs.page; });
+    syncBizFilters();
+    bRender[bs.page]();
+  }
+
   /* ---------- URL state ---------- */
   function readHash() {
     var h = new URLSearchParams(location.hash.slice(1));
     if (DASHES.indexOf(h.get("dash")) >= 0) state.dash = h.get("dash");
     if (PAGES.indexOf(h.get("page")) >= 0) state.page = h.get("page");
     var y = +h.get("year"); state.year = y === 2025 || y === 2026 ? y : 0;
-    state.region = data.regions.indexOf(h.get("region")) >= 0 ? h.get("region") : "";
-    state.am = data.ams.indexOf(h.get("am")) >= 0 ? h.get("am") : "";
-    var b = h.get("branch"); state.branch = b !== null && B[+b] ? +b : null;
-    var r = h.get("rep"); state.rep = r !== null && R[+r] ? +r : null;
+    state.region = h.get("region") || "";
+    state.am = h.get("am") || "";
+    state.branch = h.get("branch") !== null ? +h.get("branch") : null;
+    state.rep = h.get("rep") !== null ? +h.get("rep") : null;
+    if (h.get("bpage") === "profit" || h.get("bpage") === "overview") bs.page = h.get("bpage");
+    bs.year = +h.get("byear") || bs.year;
+    bs.seg = h.get("seg") || ""; bs.cat = h.get("cat") || ""; bs.reg = h.get("reg") || "";
+    bs.city = h.get("city"); bs.sub = h.get("sub");
+    if (data) validateBP();
+  }
+  function validateBP() {
+    if (data.regions.indexOf(state.region) < 0) state.region = "";
+    if (data.ams.indexOf(state.am) < 0) state.am = "";
+    if (state.branch != null && !B[state.branch]) state.branch = null;
+    if (state.rep != null && !R[state.rep]) state.rep = null;
   }
   function writeHash() {
     var h = new URLSearchParams();
-    if (state.dash !== "bp") h.set("dash", state.dash);
+    if (state.dash === "business") {
+      h.set("dash", "business");
+      if (bs.page !== "overview") h.set("bpage", bs.page);
+      if (biz.years.length && bs.year !== biz.years[biz.years.length - 1]) h.set("byear", bs.year);
+      if (bs.seg) h.set("seg", bs.seg);
+      if (bs.cat) h.set("cat", bs.cat);
+      if (bs.reg) h.set("reg", bs.reg);
+      if (bs.city) h.set("city", bs.city);
+      if (bs.sub) h.set("sub", bs.sub);
+    } else if (state.dash !== "bp") h.set("dash", state.dash);
     else {
       if (state.page !== "overview") h.set("page", state.page);
       if (state.year) h.set("year", state.year);
@@ -812,22 +1154,67 @@
       b.tabIndex = on ? 0 : -1;
       document.getElementById(b.getAttribute("aria-controls")).hidden = !on;
     });
-    document.getElementById("dash-note").style.visibility = state.dash === "bp" ? "" : "hidden";
-    if (state.dash !== "bp") { showEmbed(document.getElementById("dash-" + state.dash)); writeHash(); return; }
+    document.getElementById("dash-note").style.visibility = state.dash === "covid" ? "hidden" : "";
+    if (state.dash === "covid") { showEmbed(document.getElementById("dash-covid")); writeHash(); return; }
+    if (state.dash === "business") { renderBiz(); writeHash(); return; }
+    document.getElementById("bp-loading").hidden = !!md;
+    if (!md) return;
     if (state.page !== "growth") state.month = null;
     pageBtns.forEach(function (b) {
       var on = b.dataset.page === state.page;
       b.setAttribute("aria-selected", String(on));
       b.tabIndex = on ? 0 : -1;
     });
-    document.querySelectorAll(".page").forEach(function (p) { p.hidden = p.dataset.page !== state.page; });
+    document.querySelectorAll("#dash-bp .page").forEach(function (p) { p.hidden = p.dataset.page !== state.page; });
     syncFilters();
     render$[state.page]();
     writeHash();
   }
 
+  function loadBP() {
+    XlsxLite.read("data/Branch_Performance_Synthetic.xlsx", { sheets: ["Merchants", "Monthly_Volume", "Branches", "Reps"], dates: ["Signing date", "Month"] })
+      .then(function (wb) { data = fromWorkbook(wb); })
+      .catch(function (e) {
+        if (window.console) console.warn("Excel data could not be read, using the built-in copy:", e);
+        data = DemoData.generate();
+        document.getElementById("dash-note-text").textContent = "Built-in copy of the Excel data";
+      })
+      .then(function () {
+        md = DemoModel.create(data); B = data.branches; R = data.reps;
+        fillBPOptions(); validateBP(); render();
+      });
+  }
+  // rebuild the merchant records the measures expect from the four Excel tables
+  function fromWorkbook(wb) {
+    var regions = [], ams = [], bIdx = {}, rIdx = {}, byMid = {}, lastMi = 0;
+    var branches = wb.Branches.map(function (r, i) {
+      if (regions.indexOf(r.Region) < 0) regions.push(r.Region);
+      bIdx[r["Branch code"]] = i;
+      return { id: i, code: r["Branch code"], name: r.Branch, region: r.Region, am: r["Account manager"], seasonal: r.Seasonal === "Yes" };
+    });
+    var reps = wb.Reps.map(function (r, i) { if (ams.indexOf(r.Team) < 0) ams.push(r.Team); rIdx[r.Rep] = i; return { id: i, name: r.Rep, am: r.Team }; });
+    function monthIndex(d) { return (d.getUTCFullYear() - 2025) * 12 + d.getUTCMonth(); }
+    wb.Monthly_Volume.forEach(function (r) { if (r.Month instanceof Date) lastMi = Math.max(lastMi, monthIndex(r.Month)); });
+    var merchants = wb.Merchants.filter(function (r) { return r["Signing date"] instanceof Date && bIdx[r["Branch code"]] != null; }).map(function (r, i) {
+      var mi = monthIndex(r["Signing date"]), y = 2025 + Math.floor(mi / 12), n = (y === 2025 ? 11 : lastMi) - mi + 1, vol = [];
+      for (var t = 0; t < n; t++) vol.push(0);
+      var x = { id: i, mid: r.MID, b: bIdx[r["Branch code"]], r: rIdx[r.Rep], mi: mi, y: y, m: (mi % 12) + 1, n: n, sp: r["Soft POS"] === "Yes",
+        pos: r["Physical POS"] === "Not recorded" ? null : r["Physical POS"] === "Yes", ec: r["E-commerce"] === "Yes", vol: vol, tot: 0 };
+      byMid[r.MID] = x;
+      return x;
+    });
+    wb.Monthly_Volume.forEach(function (r) {
+      var x = byMid[r.MID];
+      if (!x || !(r.Month instanceof Date)) return;
+      var t = monthIndex(r.Month) - x.mi, v = +r["Volume (EUR)"] || 0;
+      if (t >= 0 && t < x.n) { x.vol[t] += v; x.tot += v; }
+    });
+    return { months: MON, regions: regions, ams: ams, branches: branches, reps: reps, merchants: merchants, last: { 2025: 11, 2026: lastMi } };
+  }
+
   readHash();
   render();
+  loadBP();
   // re-measure labels once the web font is in (ECharts measures text when it draws)
   if (document.fonts) {
     var again = null;

@@ -734,3 +734,9 @@ a.feature-art { display: block; }
 .demo-link svg { width: 16px; height: 16px; }
 .feature-try { font-size: 0.93rem; color: var(--ink-2); padding: 12px 14px; border-radius: 10px; background: var(--accent-soft); }
 .feature-try b { color: var(--link); }
+
+/* profile photo in the nav */
+.avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.22); background: #1e3a5f; }
+.projects { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1060px) { .projects { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .projects { grid-template-columns: 1fr; } }
